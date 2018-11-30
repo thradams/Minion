@@ -37,12 +37,6 @@
     <ClInclude Include="Socket.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskQueue.h">
       <Filter>Source Files</Filter>
     </ClInclude>
