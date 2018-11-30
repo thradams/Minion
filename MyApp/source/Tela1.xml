@@ -1,0 +1,5 @@
+
+<Tela1>
+<h1>Teste</h1>
+<MyButton Name="Button1" onclick = "this.Screen.F()"></MyButton>
+</Tela1>
