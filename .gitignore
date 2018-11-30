@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/Debug
+/TestError/Debug
+/TestTaskQueue/Debug
+/Test_Actor/Debug
+/Test_ThreadPool/Debug
