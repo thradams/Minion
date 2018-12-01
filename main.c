@@ -23,6 +23,13 @@ char rootDirectory[500] = { 0 };
 char ROOT_PATH[100] = {0};
 char SOURCE_PATH[100] = { 0 };
 
+
+void Function(struct HttpConnection* pCon)
+{
+    struct Error error = ERROR_INIT;
+
+    
+}
 int main(int argc, char *argv[])
 {
   
@@ -54,6 +61,7 @@ int main(int argc, char *argv[])
 
   if (HttpServer_Init(&httpServer,
     SECURITY_VERSION_NONE,
+    Function,
     PORT_NUMBER,
     "my_test_cert.crt",
     "my_test_privkey.key",

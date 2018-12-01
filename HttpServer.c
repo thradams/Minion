@@ -221,11 +221,18 @@ static void SaveFile(struct HttpConnection* pCon,
 
 }
 
+struct HandleConnectionCapture
+{
+    struct HttpConnection* pCon;
+    HandleFunction Func;
+};
+
 static void HandleConnection(enum TASK_ACTION action, void* pData)
 {
   AddPost(L"Thread/%d HandleConnection", (int)GetCurrentThreadId());
+  struct HandleConnectionCapture* pCapture = (struct HandleConnectionCapture*) pData;
 
-  struct HttpConnection* pCon = *((struct HttpConnection**) pData);
+  struct HttpConnection* pCon = pCapture->pCon;
   if (pCon)
   {
     struct Error error = ERROR_INIT;
@@ -288,6 +295,7 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
 
     if (Error_IsEmpty(&error))
     {
+      pCapture->Func(pCon);
       if (pCon->Method == HTTP_METHOD_GET &&
         strcmp(pCon->uri, "/edit/func/1") == 0)
       {
@@ -388,7 +396,8 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
           struct HttpConnection* pCon = HttpConnection_Create(socket, pHttpServer->m_ctx, &error);
           if (pCon)
           {
-            ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));
+            struct HandleConnectionCapture capture = { pCon, pHttpServer->HandleFunction };
+            ThreadPool_Push(NULL, HandleConnection, &capture, sizeof(capture));
           }
         }
       }
@@ -437,12 +446,13 @@ static void SetSecurity(SSL_CTX *ctx, enum SECURITY securityVersion)
 
 bool HttpServer_Init(struct HttpServer* httpServer,
   enum SECURITY securityVersion,
+  HandleFunction handleFunction,
   const char* port,
   const char* strsslCertificate,
   const char* strsslPrivateKey,
   struct Error* error)
 {
-
+  httpServer->HandleFunction = handleFunction;
   httpServer->m_ctx = NULL;
 
   if (securityVersion != SECURITY_VERSION_NONE)
