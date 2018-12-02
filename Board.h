@@ -1,10 +1,6 @@
 #pragma once
 #include <stddef.h>
-
-struct Board
-{
-  struct Node*  pRoot;
-};
+#include "BoardCore.h"
 
 void AddPost(const wchar_t * fmt, ...);
 void Board_Paint();
