@@ -373,6 +373,7 @@ static void GuiAddPost(enum TASK_ACTION action, void* p)
   free(psz);
 }
 
+#ifdef UIACTOR
 void AddPost(const wchar_t * fmt, ...)
 {
   
@@ -394,6 +395,7 @@ void AddPost(const wchar_t * fmt, ...)
     va_end(args);
 
     UIActor_Post(GuiAddPost, &psz, sizeof(void*));
+
     //std::wstring sKey = buffer;
 
     //s_MobileHttpServer.m_spWhiteboard->Dispatch([sKey](WhiteBoard& board)
@@ -402,7 +404,7 @@ void AddPost(const wchar_t * fmt, ...)
     //});
   //}
 }
-
+#endif
 
 
 void Node_PrintS(struct Node* p, int* y, int* n)
@@ -415,16 +417,20 @@ void Node_PrintS(struct Node* p, int* y, int* n)
   
   if (p->Key)
   {
+#ifdef CONSOLE_CONIO
     textcolor(CYAN);
     gotoxy(1 + *n * 1, *y);
+#endif
     //TextOut(hdc, 10 + *n * 20, *y, p->Key, wcslen(p->Key));
     printf("%ls", (const wchar_t*)p->Key);
   }
 
   if (p->Text)
   {
+#ifdef CONSOLE_CONIO
     textcolor(WHITE);
     gotoxy(20 + *n * 1, *y);
+#endif
     //TextOut(hdc, 200 + *n * 20, *y, p->Text, wcslen(p->Text));
     //TextOut(hdc, 10 + *n * 5, y, p->Key, 0);
     printf(" : %ls", p->Text);
@@ -442,8 +448,9 @@ void Node_PrintS(struct Node* p, int* y, int* n)
 
 void Board_Paint()
 {
+#ifdef CONSOLE_CONIO
   _setcursortype(_NOCURSOR);
-
+#endif
   if (Board.pRoot)
   {
     int n = 0;
@@ -452,8 +459,12 @@ void Board_Paint()
     {
       Node_PrintS(Board.pRoot->pChildNodes[i], &y, &n);
     }
+#ifdef CONSOLE_CONIO
     gotoxy(1, y);
+#endif
   }
+#ifdef CONSOLE_CONIO
   _setcursortype(_SOLIDCURSOR);
+#endif
 
 }

@@ -1,0 +1,7 @@
+Design.InputText = ``;
+
+
+class InputText
+{
+    
+}

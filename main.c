@@ -39,8 +39,17 @@ void Function(struct HttpConnection* pCon)
 #ifdef BOARD
         AddPost(L"Thread/%d send file %s", (int)GetCurrentThreadId(), pCon->uri);
 #endif
-        if (strncmp(pCon->uri, "/html", 5) == 0)
+        if (strcmp(pCon->uri, "/html/index.html") == 0)
         {
+            //Build completo
+            BuildApp(SOURCE_PATH, ROOT_PATH);
+            
+            HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
+        }
+        else if (strncmp(pCon->uri, "/html", 5) == 0)
+        {
+            BuildApp(SOURCE_PATH, ROOT_PATH);
+
             //aqui vou ver se eh edit ou srce
             HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
         }
