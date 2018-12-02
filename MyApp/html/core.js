@@ -113,14 +113,8 @@ function Create(node, screen, parent, parentElem)
 function ShowScreen(className)
 {
     var parser0 = new DOMParser();
-    var doc0 = parser0.parseFromString("<" + className + "></" + className +
-        ">", "application/xml");
+    var doc0 = parser0.parseFromString("<" + className + "></" + className + ">", "application/xml");
     var child_n = doc0.firstChild;
-    //A tela vai ser sempre uma div
-    //var htmlElement = document.createElement('div');
-    //var screen = eval("new " + screenName + "();");
-    //screen.htmlElement = htmlElement;
-
 
     if (Design[className])
     {
@@ -128,6 +122,7 @@ function ShowScreen(className)
         var doc = parser.parseFromString(Design[className], "application/xml");
         var nodeClass = doc.firstChild;
         //se nada for dito o controle eh sempre div
+
         var elemType = 'div';
         if (nodeClass.attributes["Class"])
         {
@@ -135,20 +130,16 @@ function ShowScreen(className)
             elemType = nodeClass.attributes["Class"].nodeValue;
         }
         var childObject = eval("new " + className + "();");
-        //seta a propriedade tela do item
-        //childObject.Screen = screen;
+        
         //seta o elemento dom
         childObject.htmlElement = document.createElement(elemType);
 
         var screen = childObject; //ele mesmo
         Create(nodeClass, screen, childObject, childObject.htmlElement);
 
-
         //seta os atributos da classe
         for (var j = 0; j < nodeClass.attributes.length; j++)
         {
-
-
             if (nodeClass.attributes[j].nodeName in childObject)
             {
                 console.log("childObject[" + nodeClass.attributes[j].nodeName + "] = " + nodeClass.attributes[j].nodeValue);
@@ -170,7 +161,6 @@ function ShowScreen(className)
         //seta as propriedades da instancia
         for (var j = 0; j < child_n.attributes.length; j++)
         {
-
             if (child_n.attributes[j].nodeName in childObject)
             {
                 console.log("childObject[" + child_n.attributes[j].nodeName + "] = " + child_n.attributes[j].nodeValue);
@@ -191,24 +181,8 @@ function ShowScreen(className)
                     child_n.attributes[j].nodeValue;
 
             }
-
         }
-        //TODO inserir filhos da instancia ? tipo menu?
-        //adiciona do DOM de objetos
-        //parent[childObject.Name] = childObject;
-
-        /*
-        Injeta uma propriedade Screen
-        */
-        //childObject.Screen = screen;
-
-        //adiciona do DOM da web
-        //parentElem.appendChild(childObject.htmlElement);
     }
-
-    //var doc2 = parser.parseFromString(Design[screenName], "application/xml");
-    //var nodeClass = doc2.firstChild;
-    //Create(nodeClass, screen, screen, htmlElement);
 
     document.body.innerText = "";
     document.body.appendChild(childObject.htmlElement);

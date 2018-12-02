@@ -43,7 +43,7 @@ void Function(struct HttpConnection* pCon)
         {
             //Build completo
             BuildApp(SOURCE_PATH, ROOT_PATH);
-            
+
             HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
         }
         else if (strncmp(pCon->uri, "/html", 5) == 0)
@@ -66,8 +66,8 @@ void Function(struct HttpConnection* pCon)
     }
     else if (pCon->Method == HTTP_METHOD_POST)
     {
-        SaveFile(pCon, SOURCE_PATH,&error);
-       //HttpConnection_Delete(pCon);
+        SaveFile(pCon, SOURCE_PATH, &error);
+        //HttpConnection_Delete(pCon);
     }
 }
 

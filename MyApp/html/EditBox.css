@@ -1,14 +1,12 @@
 
 .EditBox {
-    
     width: 100%;
-     
     border: 1px solid rgb(67, 67, 70);
     border-radius: 4px;
     box-sizing: border-box;
     color: rgb(241, 241, 241);
     font-family: Arial;
-    font-size: 14px; 
+    font-size: 14px;
     height: 34px;
     margin-bottom: 6px;
     padding-left: 7px;
