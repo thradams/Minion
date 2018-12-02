@@ -28,6 +28,12 @@
     <ClCompile Include="..\tinycthread.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\TaskQueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Socket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Actor.h">
@@ -48,5 +54,9 @@
     <ClInclude Include="..\tinycthread.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\TaskQueue.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Socket.h" />
   </ItemGroup>
 </Project>

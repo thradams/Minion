@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <openssl/ssl.h>
 #include "Socket.h"
+#include <openssl/ssl.h>
 #include "Error.h"
 
 enum HTTP_METHOD
@@ -53,3 +53,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
   const char* fileName,
   const char* ROOT_PATH,
   struct Error* error);
+
+void SaveFile(struct HttpConnection* pCon,
+    const char* SOURCE_PATH,
+    struct Error* error);

@@ -162,6 +162,8 @@
     <ClCompile Include="..\Error.c" />
     <ClCompile Include="..\HttpConnection.c" />
     <ClCompile Include="..\HttpServer.c" />
+    <ClCompile Include="..\Socket.c" />
+    <ClCompile Include="..\TaskQueue.c" />
     <ClCompile Include="..\ThreadPool.c" />
     <ClCompile Include="..\tinycthread.c" />
     <ClCompile Include="Test_Http.c" />
@@ -171,6 +173,8 @@
     <ClInclude Include="..\Error.h" />
     <ClInclude Include="..\HttpConnection.h" />
     <ClInclude Include="..\HttpServer.h" />
+    <ClInclude Include="..\Socket.h" />
+    <ClInclude Include="..\TaskQueue.h" />
     <ClInclude Include="..\ThreadPool.h" />
     <ClInclude Include="..\tinycthread.h" />
   </ItemGroup>

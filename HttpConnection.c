@@ -403,7 +403,9 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
   struct Error* error)
 {
 
+#ifdef BOARD
   AddPost(L"Thread/%d HttpConnection_SendFile", (int)GetCurrentThreadId());
+#endif
 
   if (!Error_IsEmpty(error))
   {
@@ -411,7 +413,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
   }
   char fileName[500] = { 0 };
   strcpy(fileName, ROOT_PATH);
-  char* p = fileName0;
+  const char* p = fileName0;
   while (*p && *p != '?')
   {
     strncat(fileName, p, 1);
@@ -610,4 +612,61 @@ bool HttpConnection_SendFileIfModified(struct HttpConnection* connection,
     Error_Set(error, "e");
   }
   return Error_IsEmpty(error);
+}
+
+
+void SaveFile(struct HttpConnection* pCon,
+    const char* SOURCE_PATH,
+    struct Error* error)
+{
+    if (pCon->ContentLength > 0)
+    {
+        char buffer[MAX_PATH];
+        char* strings[10];
+        int stringsCount = 0;
+        strcpy(buffer, pCon->uri);
+
+
+        char* p = buffer;
+        strings[stringsCount] = p;
+        stringsCount++;
+
+        while (*p)
+        {
+            if (*p == '/')
+            {
+                strings[stringsCount] = p + 1;
+                *p = 0;
+                stringsCount++;
+            }
+            p++;
+        }
+
+        char buffer2[MAX_PATH];
+        strcpy(buffer2, SOURCE_PATH);
+        strcat(buffer2, "/source/");
+        strcat(buffer2, strings[stringsCount - 1]);
+
+        FILE * out = fopen(buffer2, "w");
+        if (out)
+        {
+            int bytesRead = 0;
+            char ch;
+            while (Error_IsEmpty(error))
+            {
+                if (HttpConnection_GetChar(pCon, &ch, error))
+                {
+                    fputc(ch, out);
+                    bytesRead++;
+                    if (bytesRead == pCon->ContentLength)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            fclose(out);
+        }
+    }
+
 }

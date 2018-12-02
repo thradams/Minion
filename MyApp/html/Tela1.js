@@ -2,6 +2,11 @@ Design.Tela1 = `
 <Tela1>
 <h1>Teste</h1>
 <MyButton Name="Button1" onclick = "this.Screen.F()"></MyButton>
+<div>
+  a
+  <div>teste</div>
+  </div>
+  
 </Tela1>
 `;
 

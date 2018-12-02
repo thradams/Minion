@@ -1,10 +1,12 @@
 #pragma once
 
 
-#include <openssl/ssl.h>
+
 #include "Error.h"
 #include "Socket.h"
 #include "HttpConnection.h"
+#include <openssl/ssl.h>
+
 enum SECURITY
 {
   SECURITY_VERSION_NONE = 0,
