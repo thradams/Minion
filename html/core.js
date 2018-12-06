@@ -207,7 +207,12 @@ function ShowScreen(className)
 ////////
 
 //Runtime
-
+/**
+ * xmlhttp.open("POST", "/json-handler");
+   xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+   xmlhttp.send(JSON.stringify({ "email": "hello@user.com", "response": { "name": "Tester" } }));
+ */
+ 
 function HttpRequest(url, method, onRequestCompleted, onRequestFailed, data, timeoutMs) 
 {
     try {
