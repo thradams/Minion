@@ -2,6 +2,9 @@ class DefaultLogin
 {
   Login()
   {
-      alert(this.UserName.htmlElement.value);
+    func(this.UserName.htmlElement.value, 
+    function(er){
+      if (!er){ alert(  "Ok"); }
+    });    
   }
 }

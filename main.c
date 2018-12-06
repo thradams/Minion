@@ -12,6 +12,9 @@
 
 #include "HttpServer.h"
 #include "AppBuild.h"
+#include "duktape.h"
+#include "MinionServer.h"
+
 //#include <Windows.h>
 
 int s_screen_1_dirty = 0;
@@ -24,52 +27,9 @@ char ROOT_PATH[100] = { 0 };
 char SOURCE_PATH[100] = { 0 };
 
 
-void Function(struct HttpConnection* pCon)
-{
-    struct Error error = ERROR_INIT;
-    if (pCon->Method == HTTP_METHOD_GET &&
-        strcmp(pCon->uri, "/edit/func/1") == 0)
-    {
-        BuildApp(SOURCE_PATH, ROOT_PATH);
-        //AddPost(L"Thread/%d %s", (int)GetCurrentThreadId(), pCon->uri);
-        //Call(pCon, 1, &error);
-    }
-    else if (pCon->Method == HTTP_METHOD_GET)
-    {
-#ifdef BOARD
-        AddPost(L"Thread/%d send file %s", (int)GetCurrentThreadId(), pCon->uri);
-#endif
-        if (strcmp(pCon->uri, "/html/index.html") == 0)
-        {
-            //Build completo
-            BuildApp(SOURCE_PATH, ROOT_PATH);
 
-            HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
-        }
-        else if (strncmp(pCon->uri, "/html", 5) == 0)
-        {
-            BuildApp(SOURCE_PATH, ROOT_PATH);
 
-            //aqui vou ver se eh edit ou srce
-            HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
-        }
-        else if (strncmp(pCon->uri, "/source", 5) == 0)
-        {
-            //aqui vou ver se eh edit ou srce
-            HttpConnection_SendFile(pCon, pCon->uri, SOURCE_PATH, &error);
-        }
-        else if (strncmp(pCon->uri, "/edit", 5) == 0)
-        {
-            //aqui vou ver se eh edit ou srce
-            HttpConnection_SendFile(pCon, pCon->uri, ROOT_PATH, &error);
-        }
-    }
-    else if (pCon->Method == HTTP_METHOD_POST)
-    {
-        SaveFile(pCon, SOURCE_PATH, &error);
-        //HttpConnection_Delete(pCon);
-    }
-}
+
 
 int main(int argc, char *argv[])
 {
@@ -80,15 +40,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    strcat(SOURCE_PATH, argv[1]);
-    strcat(ROOT_PATH, "./");
-
-    char drive[_MAX_DRIVE];
-    //char dir[_MAX_DIR];
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
-
-    _splitpath(argv[0], drive, rootDirectory, fname, ext);
 
     UIActor_Init();
     WSADATA wsaData;
@@ -97,23 +48,15 @@ int main(int argc, char *argv[])
 
     ThreadPool_Init(NULL, 100);
 
-    struct HttpServer httpServer;
+    struct MinionServer minionServer;
+    
     struct Error error = ERROR_INIT;
 
-    if (HttpServer_Init(&httpServer,
-        SECURITY_VERSION_NONE,
-        Function,
-        PORT_NUMBER,
-        "my_test_cert.crt",
-        "my_test_privkey.key",
-        &error))
-    {
-
+    if (MinionServer_Init(&minionServer, argv[1] , "./", &error))
+    {    
+      
     }
-    else
-    {
-    }
-
+    
 
     s_screen_0_dirty = 1;
     int screen_number = 0;
@@ -162,9 +105,9 @@ int main(int argc, char *argv[])
             }
             else if (k == 'b')
             {
-                printf("building..\n");
-                BuildApp(SOURCE_PATH, ROOT_PATH);
-                printf("complete\n");
+                //printf("building..\n");
+                //BuildApp(SOURCE_PATH, ROOT_PATH);
+                //printf("complete\n");
             }
 
             if (k == 27)
@@ -181,7 +124,7 @@ int main(int argc, char *argv[])
 
     WSACleanup();
 
-
+    MinionServer_Destroy(&minionServer);
 
     return 0;
 }

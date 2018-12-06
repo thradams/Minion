@@ -29,6 +29,7 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="HttpConnection.h" />
     <ClInclude Include="HttpServer.h" />
+    <ClInclude Include="MinionServer.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="TaskQueue.h" />
     <ClInclude Include="ThreadPool.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="HttpConnection.c" />
     <ClCompile Include="HttpServer.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="MinionServer.c" />
     <ClCompile Include="Socket.c" />
     <ClCompile Include="TaskQueue.c" />
     <ClCompile Include="ThreadPool.c" />

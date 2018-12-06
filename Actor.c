@@ -91,7 +91,7 @@ void ActorProcess(enum TASK_ACTION state, void* pdata)
 extern struct ThreadPool MainThreadPool;
 
 void Actor_Post(struct Actor* actor,
-  TaskFunction taskFunction,
+  TaskFunction taskFunction /*void Function(enum TASK_ACTION action, void* pData);*/,
   void* pCapture,
   size_t captureSizeBytes)
 {

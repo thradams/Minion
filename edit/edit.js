@@ -102,17 +102,17 @@ function HttpRequest(url, method, onRequestCompleted, onRequestFailed, data, tim
     }
 };
 
-function BuildApp()
-{
-    HttpRequest("func/1", 'GET', function(json){
+//function BuildApp()
+//{
+  //  HttpRequest("func/1", 'GET', function(json){
 
-    },
-    function (e){
+    //},
+    //function (e){
 
-    });
+//    });
 
     //alert('build');
-}
+//}
 
 function getQueryStringValue(key)
 {
@@ -152,7 +152,7 @@ function SaveFiles()
   {
     SendText(name + ".js", myCodeMirrorJS.getValue(), function ()
     {
-      BuildApp();
+      //BuildApp();
     });
   });
   

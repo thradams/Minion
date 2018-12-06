@@ -2,10 +2,19 @@ Design.DefaultLogin = `<DefaultLogin className="DefaultLogin">
     <h1>Login</h1>
     <MyButton onclick = "ShowScreen('Tela1')" Text="Voltar"></MyButton>
 
-    <EditBox Name="UserName">Name</EditBox>
-    <EditBox Name="Password">Name</EditBox>
-     <MyButton onclick = "this.Screen.Login()" Text="Login"></MyButton>
-
+  
+  <div>
+  <p>User</p>
+  <EditBox Name="UserName">Name</EditBox> <br/>
+  </div>
+  
+  <div>
+    <p>Password</p>
+    <EditBox Name="Password">Name</EditBox> <br/>
+  </div>
+    <MyButton onclick = "this.Screen.Login()" Text="Login"></MyButton>
+  
+  
 </DefaultLogin>
 `;
 
@@ -13,6 +22,9 @@ class DefaultLogin
 {
   Login()
   {
-      alert(this.UserName.htmlElement.value);
+    func(this.UserName.htmlElement.value, 
+    function(er){
+      if (!er){ alert(  "Ok"); }
+    });    
   }
 }

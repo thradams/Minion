@@ -19,6 +19,7 @@ enum HTTP_METHOD
   HTTP_METHOD_EXTENSION
 };
 
+struct HttpServer;
 /*
   HttpConnection abstrai o conceito de socket de tal forma
   que nao insteressa se eh socket normal ou se eh conexao segura
@@ -40,6 +41,8 @@ struct HttpConnection
   bool bKeepAlive;
   char uri[200];
   int ContentLength;
+
+  struct HttpServer *pHttpServer;
 };
 
 struct HttpConnection* HttpConnection_Create(Socket socket, SSL_CTX *ssl, struct Error* error);
@@ -57,3 +60,5 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
 void SaveFile(struct HttpConnection* pCon,
     const char* SOURCE_PATH,
     struct Error* error);
+
+bool HttpConnection_SendOK(struct HttpConnection* connection, struct Error* error);

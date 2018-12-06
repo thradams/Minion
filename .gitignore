@@ -13,3 +13,13 @@
 /Test_UIActor/Debug
 /Test_BuildApp/Debug
 /Test_BoardCore/Debug
+/Release
+/TestError/Release
+/TestTaskQueue/Release
+/Test_Actor/Release
+/Test_Board/Release
+/Test_BoardCore/Release
+/Test_BuildApp/Release
+/Test_Http/Release
+/Test_ThreadPool/Release
+/Test_UIActor/Release

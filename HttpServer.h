@@ -17,13 +17,14 @@ enum SECURITY
   SECURITY_VERSION_TLS12 = 4,
 };
 
-typedef void(*HandleFunction)(struct HttpConnection* connection);
+
+typedef void(*HandleFunction)(struct HttpConnection* pCon);
 
 struct HttpServer
 {
   Socket listenSocket;
   SSL_CTX *m_ctx;
-  HandleFunction HandleFunction;
+  HandleFunction HandleFunction;  
 };
 
 bool HttpServer_Run(struct HttpServer* httpServer);
@@ -35,3 +36,5 @@ bool HttpServer_Init(struct HttpServer* httpServer,
   const char* strsslCertificate,
   const char* strsslPrivateKey,
   struct Error* error);
+
+void HttpServer_ConnectionSink(struct HttpConnection* pCon);

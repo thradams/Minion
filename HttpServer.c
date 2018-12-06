@@ -128,20 +128,14 @@ static void HandleConnection(enum TASK_ACTION action, void* pData);
 
 
 
-struct HandleConnectionCapture
-{
-    struct HttpConnection* pCon;
-    HandleFunction Func;
-};
+
 
 static void HandleConnection(enum TASK_ACTION action, void* pData)
 {
 #ifdef BOARD
     AddPost(L"Thread/%d HandleConnection", (int)GetCurrentThreadId());
 #endif
-    struct HandleConnectionCapture* pCapture = (struct HandleConnectionCapture*) pData;
-
-    struct HttpConnection* pCon = pCapture->pCon;
+    struct HttpConnection* pCon = *((struct HttpConnection**) pData);
     if (pCon)
     {
         struct Error error = ERROR_INIT;
@@ -205,38 +199,36 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
         if (Error_IsEmpty(&error))
         {
             //User callback
-            pCapture->Func(pCon);
-
-            if (Error_IsEmpty(&error))
-            {
-                if (pCon->bKeepAlive)
-                {
-                    //Reseta o header e reaproveita a conexão
-                    pCon->bKeepAlive = false;
-                    pCon->uri[0] = 0;
-                    pCon->Method = HTTP_METHOD_NONE;
-
-                    Socket_SetTimeout(pCon->Socket, 3000);
-                    HandleConnection(action, pData);
-                }
-                else
-                {
-                    //ok pode fechar
-                    HttpConnection_Delete(pCon);
-                }
-            }
-            else
-            {
-                //enviar error
-                HttpConnection_Delete(pCon);
-            }
-
+            pCon->pHttpServer->HandleFunction(pCon);
         }
         else
         {
+            //enviar erro?
             //ok pode fechar
             HttpConnection_Delete(pCon);
         }
+    }
+}
+
+void HttpServer_ConnectionSink(struct HttpConnection* pCon)
+{  
+    /*
+    Reciclagem da conexao
+    */
+    if (pCon->bKeepAlive)
+    {
+      //Reseta o header e reaproveita a conexão
+      pCon->bKeepAlive = false;
+      pCon->uri[0] = 0;
+      pCon->Method = HTTP_METHOD_NONE;
+
+      Socket_SetTimeout(pCon->Socket, 3000);
+      ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));
+    }
+    else
+    {
+      //ok pode fechar
+      HttpConnection_Delete(pCon);
     }
 }
 
@@ -273,8 +265,8 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
                     struct HttpConnection* pCon = HttpConnection_Create(socket, pHttpServer->m_ctx, &error);
                     if (pCon)
                     {
-                        struct HandleConnectionCapture capture = { pCon, pHttpServer->HandleFunction };
-                        ThreadPool_Push(NULL, HandleConnection, &capture, sizeof(capture));
+                      pCon->pHttpServer = pHttpServer;//vive mais que conexao
+                      ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));//SINK
                     }
                 }
             }
@@ -323,14 +315,15 @@ static void SetSecurity(SSL_CTX *ctx, enum SECURITY securityVersion)
 }
 
 bool HttpServer_Init(struct HttpServer* httpServer,
-    enum SECURITY securityVersion,
-    HandleFunction handleFunction,
+  enum SECURITY securityVersion,
+  HandleFunction handleFunction,
     const char* port,
     const char* strsslCertificate,
     const char* strsslPrivateKey,
     struct Error* error)
 {
     httpServer->HandleFunction = handleFunction;
+    
     httpServer->m_ctx = NULL;
 
     if (securityVersion != SECURITY_VERSION_NONE)

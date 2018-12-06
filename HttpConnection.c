@@ -11,7 +11,7 @@ extern char ROOT_PATH[100];
 bool HttpConnection_Init(struct HttpConnection* connection, Socket socket, SSL_CTX *ctx, struct Error* error)
 {
   bool bIsValid = false;
-
+  connection->pHttpServer = NULL;
   connection->ContentLength = 0;
   connection->bKeepAlive = false;
   connection->uri[0] = 0;
@@ -395,6 +395,23 @@ const char* GetMimeType(const char* name)
   //http://reference.sitepoint.com/html/mime-types-full
   //ASSERT(false);
   return "";
+}
+
+bool HttpConnection_SendOK(struct HttpConnection* connection, struct Error* error)
+{  
+    if (connection->bKeepAlive)
+    {
+        const char m[] = "HTTP/1.1 204 OK\r\n"
+            "Connection: keep-alive\r\n\r\n";
+        HttpConnection_PushBytes(connection, m, sizeof(m), error);
+    }
+    else
+    {
+        const char m[] = "HTTP/1.1 204 OK\r\n"
+            "Connection: close\r\n\r\n";
+        HttpConnection_PushBytes(connection, m, sizeof(m), error);
+    }
+  return Error_IsEmpty(error);
 }
 
 bool HttpConnection_SendFile(struct HttpConnection* connection,
