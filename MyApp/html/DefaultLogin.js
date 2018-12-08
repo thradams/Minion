@@ -18,13 +18,15 @@ Design.DefaultLogin = `<DefaultLogin className="DefaultLogin">
 </DefaultLogin>
 `;
 
+
+
 class DefaultLogin
 {
   Login()
   {
-    func(this.UserName.htmlElement.value, 
-    function(er){
-      if (!er){ alert(  "Ok"); }
-    });    
+      Call("func", 1 , function (e)
+      {
+          alert(e);           
+      });          
   }
 }

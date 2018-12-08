@@ -9,6 +9,13 @@ void JsonScanner_CopyString(struct JsonScanner* scanner, const char* sinkString)
     StrBuilder_Clear(&scanner->Lexeme);
 }
 
+void JsonScanner_BuyString(struct JsonScanner* scanner, const char* sinkString)
+{
+    Stream_BuyString(&scanner->Stream, sinkString);
+    scanner->Token = TK_NONE;
+    StrBuilder_Clear(&scanner->Lexeme);
+}
+
 void JsonScanner_Destroy(struct JsonScanner* scanner)
 {
     Stream_Destroy(&scanner->Stream);
@@ -105,7 +112,10 @@ void JsonScanner_Match(struct JsonScanner* scanner)
     else if (ch == '"')
     {
         scanner->Token = TK_STRING;
-        ch = JsonScanner_MatchChar(scanner);
+        
+        Stream_Match(&scanner->Stream);
+        ch = Stream_GetChar(&scanner->Stream);
+
         for (;;)
         {
             if (ch == L'\\')
@@ -131,7 +141,8 @@ void JsonScanner_Match(struct JsonScanner* scanner)
             }
             else if (ch == '"')
             {
-                ch = JsonScanner_MatchChar(scanner);
+                Stream_Match(&scanner->Stream);
+                ch = Stream_GetChar(&scanner->Stream);                
                 break;
             }
             else

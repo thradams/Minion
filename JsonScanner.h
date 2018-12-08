@@ -33,6 +33,6 @@ void JsonScanner_Destroy(struct JsonScanner* scanner);
 void JsonScanner_GetToken(struct JsonScanner* scanner);
 void JsonScanner_Match(struct JsonScanner* scanner);
 void JsonScanner_Destroy(struct JsonScanner* scanner);
-
+void JsonScanner_BuyString(struct JsonScanner* scanner, const char* sinkString);
 void JsonScanner_CopyString(struct JsonScanner* stream, const char* sinkString);
 
