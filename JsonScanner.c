@@ -1,6 +1,7 @@
 
 #include "JsonScanner.h"
 #include <assert.h>
+
 void JsonScanner_CopyString(struct JsonScanner* scanner, const char* sinkString)
 {
   Stream_CopyString(&scanner->Stream, sinkString);
