@@ -55,6 +55,15 @@
     <ClInclude Include="MinionServer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="JsonScanner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StrBuilder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.c">
@@ -103,6 +112,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MinionServer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonScanner.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrBuilder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stream.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

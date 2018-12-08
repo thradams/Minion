@@ -23,3 +23,6 @@
 /Test_Http/Release
 /Test_ThreadPool/Release
 /Test_UIActor/Release
+/Test_JsonScanner/Debug
+/Test_StrBuilder/Debug
+/Test_Stream/Debug
