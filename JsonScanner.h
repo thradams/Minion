@@ -18,7 +18,8 @@ enum Tokens
   TK_NUMBER,
   TK_TRUE,
   TK_FALSE,
-  TK_NULL
+  TK_NULL,
+  TK_EOF,
 };
 struct JsonScanner
 {
