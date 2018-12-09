@@ -8,20 +8,30 @@
 #include <wtypes.h>
 #include <stdarg.h>
 #include <wchar.h>
-
+#include <assert.h>
 
 #include "Board.h"
 #include "UITask.h"
 #include "conio.h"
-
+#include "BoardCore.h"
 
 struct Board Board = { 0 };
 
 static void GuiAddPost(enum TASK_ACTION action, void* p)
 {
-  wchar_t *psz = *((wchar_t **)p);
-  Board_Add(&Board, psz);
-  free(psz);
+    wchar_t *psz = *((wchar_t **)p);
+    if (action == TASK_RUN)
+    {
+        Board_Add(&Board, psz);     
+    }
+    else
+    {
+        //in case of full the call thread
+        //can be diferent
+        //
+        // assert(false);
+    }
+    free(psz);
 }
 
 #ifdef UIACTOR
