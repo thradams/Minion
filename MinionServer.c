@@ -17,10 +17,30 @@ void NativeLogin(const char* user,
     callback(pData);
 }
 
+struct NativeLoginHandlerCallbackCapture
+{
+    const char CallbackName[50];
+    duk_context *ctx;
+};
+
 void NativeLoginHandlerCallback(void* pData)
 {
-    duk_context *ctx = (duk_context *)pData;
-    duk_eval_string(ctx, "_callbackvar('', '\"NativeOK\"'); delete _callbackvar;");
+    struct NativeLoginHandlerCallbackCapture* pCapture =
+        (struct NativeLoginHandlerCallbackCapture*) pData;
+
+    duk_context *ctx = pCapture->ctx;
+
+    
+    char buffer[500];
+    int bufferSize = 500;
+    int number_characters_written = sprintf_s(buffer,
+        bufferSize,
+        "%s('', '\"NativeOK\"'); delete %s;",
+        pCapture->CallbackName,
+        pCapture->CallbackName);
+
+    free(pData);
+    duk_eval_string(ctx, buffer);
 }
 
 static duk_ret_t NativeLoginHandler(duk_context *ctx)
@@ -29,14 +49,20 @@ static duk_ret_t NativeLoginHandler(duk_context *ctx)
     char* user = duk_require_string(ctx, 0);
     char* password = duk_require_string(ctx, 1);
     
+    struct NativeLoginHandlerCallbackCapture* pCapture =
+        malloc(sizeof * pCapture);
+
+    strcpy(pCapture->CallbackName, "_callbackvar");
     static int count = 0;
     count++;
-
+    
+    _itoa(count, pCapture->CallbackName + sizeof("_callbackvar") - 1, 10);
+    pCapture->ctx = ctx;
     duk_require_function(ctx, 2);
     duk_dup(ctx, 2);
-    duk_put_global_string(ctx, "_callbackvar");
+    duk_put_global_string(ctx, pCapture->CallbackName);
 
-    NativeLogin(user, password, NativeLoginHandlerCallback, (void*)ctx);
+    NativeLogin(user, password, NativeLoginHandlerCallback, (void*)pCapture);
 
     
     return 0;

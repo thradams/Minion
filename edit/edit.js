@@ -144,6 +144,7 @@ function SendText(fileName, fileContentTxt, onCompleted)
 
 var myCodeMirrorXML;
 var myCodeMirrorJS;
+var myCodeMirrorCSS;
 
 function SaveFiles()
 {
@@ -153,6 +154,10 @@ function SaveFiles()
     SendText(name + ".js", myCodeMirrorJS.getValue(), function ()
     {
       //BuildApp();
+        SendText(name + ".css", myCodeMirrorCSS.getValue(), function ()
+        {
+            //BuildApp();
+        });
     });
   });
   
@@ -169,7 +174,7 @@ function OnPageLoad()
       mode: "text/xml"
     });
 
-  myCodeMirrorXML.setSize(null, 500);
+  myCodeMirrorXML.setSize(null, 300);
 
   myCodeMirrorJS = CodeMirror.fromTextArea(document.getElementById('jstext'),
     {
@@ -177,7 +182,15 @@ function OnPageLoad()
       matchBrackets: true,
       mode: "text/javascript"
     });
-  myCodeMirrorJS.setSize(null, 500);
+  myCodeMirrorJS.setSize(null, 300);
+
+    myCodeMirrorCSS = CodeMirror.fromTextArea(document.getElementById('csstext'),
+        {
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: "text/css"
+        });
+    myCodeMirrorCSS.setSize(null, 300);
 
   var name = getQueryStringValue("name");
   
@@ -216,4 +229,19 @@ function OnPageLoad()
   };
   xhr2.send(null);
 
+    //var name = "/source/Tela1";
+    var xhr3 = new XMLHttpRequest();
+    xhr3.open('GET', "/source/" + name + '.css', true);
+    xhr3.onload = function ()
+    {
+        if (xhr3.readyState === xhr.DONE)
+        {
+            if (xhr3.status === 200)
+            {
+                //document.getElementById("jstext").innerText = xhr2.response;
+                myCodeMirrorCSS.setValue(xhr3.response);
+            }
+        }
+    };
+    xhr3.send(null);
 }
