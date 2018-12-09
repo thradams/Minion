@@ -3,6 +3,8 @@
 #include "AppBuild.h"
 #include "Board.h"
 #include "JsonScanner.h"
+#include <assert.h>
+
 #define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
 
 
@@ -89,14 +91,15 @@ static duk_ret_t NativePrint(duk_context *ctx)
 static duk_ret_t NCallback(duk_context *ctx)
 {
     //Native helper to receive the JS call see Make
-    void* p1 = duk_require_pointer(ctx, 0);
-    void* p2 = duk_require_pointer(ctx, 1);
-    void(*callback)(void*) = (void(*)(void*))p1;
-    callback(p2);
+    char* s1 = duk_require_string(ctx, 0);
+    void* p1 = duk_require_pointer(ctx, 1);
+    void* p2 = duk_require_pointer(ctx, 2);
+    void(*callback)(const char* s1, void*) = (void(*)(const char*, void*))p1;
+    callback(s1, p2);
     return 0;
 }
 
-void SendValueBack(void* pData)
+void SendValueBack(const char* json, void* pData)
 {
     //Send the answer to the client side
     //the client side will run the callback
@@ -127,13 +130,9 @@ char* GetContent(struct HttpConnection* pCon, struct Error* error)
 
 void RunScript(enum TASK_ACTION action, void* pData)
 {
-
     struct HttpConnection* pCon = *((struct HttpConnection**)pData);
     struct MinionServer* pMinionServer = container_of(pCon->pHttpServer, struct MinionServer, HttpServer);
     struct Error error = ERROR_INIT;
-
-
-    
 
     if (action == TASK_RUN)
     {
@@ -159,17 +158,16 @@ void RunScript(enum TASK_ACTION action, void* pData)
                 {
                     duk_push_string(pMinionServer->pDukContext, scanner.Lexeme.c_str); //arguments are push ..
                 }
-            }
-
-            //name the function pushed
-            //duk_push_string(pMinionServer->pDukContext, "teste"); //arguments are push ..
+                else
+                {
+                    //TODO
+                    assert(false);
+                }
+            }            
         }
 
         if (Error_IsEmpty(&error))
-        {
-            //name the function pushed
-            //duk_push_string(pMinionServer->pDukContext, "teste"); //arguments are push ..
-
+        {          
           //now we create the javascript closure
           //that will call the native callback that
           //sends the answer to the client
@@ -183,8 +181,7 @@ void RunScript(enum TASK_ACTION action, void* pData)
             //call the function.
             duk_call(pMinionServer->pDukContext, 2);
         }
-        //duk_eval_string(p->pMinionServer->pDukContext, "1+2");
-        //int res = duk_get_int(p->pMinionServer->pDukContext, -1);
+      
         JsonScanner_Destroy(&scanner);
     }
 }
@@ -198,14 +195,7 @@ void MinionServerConnectionHandler(struct HttpConnection* pCon)
     if (pCon->Method == HTTP_METHOD_POST &&
         strcmp(pCon->uri, "/call") == 0)
     {
-
         Actor_Post(&pMinionServer->Actor, RunScript, &pCon, sizeof(pCon));
-        //BuildApp(pMinionServer->SOURCE_PATH, pMinionServer->ROOT_PATH);
-        //AddPost(L"Thread/%d %s", (int)GetCurrentThreadId(), pCon->uri);
-        //Call(pCon, 1, &error);
-        //HttpConnection_SendOK(pCon, &error);
-
-        //HttpServer_ConnectionSink(pCon);
     }
     else if (pCon->Method == HTTP_METHOD_GET)
     {
@@ -270,12 +260,12 @@ bool MinionServer_Init(struct MinionServer* server,
     duk_push_c_function(server->pDukContext, NativePrint, DUK_VARARGS);
     duk_put_global_string(server->pDukContext, "print");
 
-    duk_push_c_function(server->pDukContext, NCallback, DUK_VARARGS);
+    duk_push_c_function(server->pDukContext, NCallback, 3);
     duk_put_global_string(server->pDukContext, "NCallback");
 
 
 
-    duk_eval_string(server->pDukContext, "function Make(a, b) { return function() { var a1 = a; var b1 = b; NCallback(a1, b1);}}");
+    duk_eval_string(server->pDukContext, "function Make(a, b) { return function(json) { var j = json; var a1 = a; var b1 = b; NCallback(j, a1, b1);}}");
 
     char sjs[200] = { 0 };
     strcat(sjs, server->SOURCE_PATH);
