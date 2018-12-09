@@ -62,3 +62,4 @@ void SaveFile(struct HttpConnection* pCon,
     struct Error* error);
 
 bool HttpConnection_SendOK(struct HttpConnection* connection, struct Error* error);
+bool HttpConnection_SendJson(struct HttpConnection* connection, const char* jsonString, struct Error* error);

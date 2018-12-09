@@ -4,7 +4,9 @@ class DefaultLogin
 {
   Login()
   {
-      Call("func", 1 , function (e)
+      Call("func", this.UserName.htmlElement.value,
+          this.Password.htmlElement.value,
+          function (e)
       {
           alert(e);           
       });          

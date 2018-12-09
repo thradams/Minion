@@ -105,7 +105,8 @@ void SendValueBack(const char* json, void* pData)
     //the client side will run the callback
     struct HttpConnection* pCon = (struct HttpConnection*)pData;
     struct Error error = ERROR_INIT;
-    HttpConnection_SendOK(pCon, &error);
+    //HttpConnection_SendOK(pCon, &error);
+    HttpConnection_SendJson(pCon, json, &error);
     HttpServer_ConnectionSink(pCon);
 
 }
@@ -141,6 +142,7 @@ void RunScript(enum TASK_ACTION action, void* pData)
         JsonScanner_BuyString(&scanner, s);
         JsonScanner_Match(&scanner);//[
 
+        int nArguments = 0;
         JsonScanner_Match(&scanner);//string
         if (duk_get_global_string(pMinionServer->pDukContext, scanner.Lexeme.c_str))
         {
@@ -153,10 +155,14 @@ void RunScript(enum TASK_ACTION action, void* pData)
                 {
                     double dVal = atof(scanner.Lexeme.c_str);
                     duk_push_number(pMinionServer->pDukContext, dVal); //arguments are push ..
+                    JsonScanner_Match(&scanner);
+                    nArguments++;
                 }
                 else if (scanner.Token == TK_STRING)
                 {
                     duk_push_string(pMinionServer->pDukContext, scanner.Lexeme.c_str); //arguments are push ..
+                    JsonScanner_Match(&scanner);
+                    nArguments++;
                 }
                 else
                 {
@@ -179,7 +185,7 @@ void RunScript(enum TASK_ACTION action, void* pData)
                 duk_call(pMinionServer->pDukContext, 2);
             }
             //call the function.
-            duk_call(pMinionServer->pDukContext, 2);
+            duk_call(pMinionServer->pDukContext, nArguments + 1);
         }
       
         JsonScanner_Destroy(&scanner);

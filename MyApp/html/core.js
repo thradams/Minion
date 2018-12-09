@@ -481,7 +481,7 @@ function Call()
     var callback = arguments[arguments.length - 1];
     HttpRequest2(s, function (json)
     {
-        callback(null);
+        callback(json);
     },
         function (e)
         {

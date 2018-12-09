@@ -397,6 +397,24 @@ const char* GetMimeType(const char* name)
   return "";
 }
 
+bool HttpConnection_SendJson(struct HttpConnection* connection, const char* jsonString, struct Error* error)
+{
+    int len = strlen(jsonString);
+    char buffer[500];
+    int bufferSize = 500;
+    int number_characters_written = sprintf_s(buffer,
+        bufferSize,
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/json;charset=utf-8\r\n"
+        "Content-Length: %d\r\n"
+        "Connection: %s\r\n"
+        "\r\n",
+        len,
+        (connection->bKeepAlive ? "keep-alive" : "close"));
+    
+    HttpConnection_PushBytes(connection, buffer, number_characters_written, error);
+    HttpConnection_PushBytes(connection, jsonString, strlen(jsonString), error);
+}
 bool HttpConnection_SendOK(struct HttpConnection* connection, struct Error* error)
 {  
     if (connection->bKeepAlive)
