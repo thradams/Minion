@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "BoardCore.h"
-
+#include <stdio.h>
 
 struct Node* Node_Create()
 {
@@ -78,8 +78,9 @@ void QuickSort(struct Node *pNode,
 
         while (i < j)
         {
-            while (wcscmp(pNode->pChildNodes[i]->Key, pNode->pChildNodes[pivot]->Key) <= 0 &&
-                i < last_index)
+
+            while (i < last_index &&
+                   wcscmp(pNode->pChildNodes[i]->Key, pNode->pChildNodes[pivot]->Key) <= 0)
             {
                 i++;
             }
@@ -160,7 +161,10 @@ void Node_Sort(struct Node* p)
 {
     if (!p->SortedFlag)
     {
-        QuickSort(p, 0, p->Size - 1);
+        if (p->Size > 1)
+        {
+            QuickSort(p, 0, p->Size - 1);
+        }
         p->SortedFlag = true;
     }
 }
@@ -348,3 +352,47 @@ void Board_Destroy(struct Board* p)
     //TODO
     //Node_Delete(p->pRoot);
 }
+
+
+static void Node_PrintS(struct Node* p, int* y, int* n)
+{
+    Node_Sort(p);
+
+    for (int k = 0; k < *n; k++)
+      printf(" ");
+
+
+    if (p->Key)
+    {
+        printf("%ls", (const wchar_t*)p->Key);
+    }
+
+    if (p->Text)
+    {
+        printf(" : %ls\n", p->Text);
+    }
+    
+    printf("\n");
+
+    (*n)++;
+    for (int i = 0; i < p->Size; i++)
+    {
+        Node_PrintS(p->pChildNodes[i], y, n);
+    }
+    (*n)--;
+}
+
+void Board_Print(struct Board* board)
+{
+    if (board->pRoot)
+    {
+        int n = 0;
+        int y = 1;
+        for (int i = 0; i < board->pRoot->Size; i++)
+        {
+            Node_PrintS(board->pRoot->pChildNodes[i], &y, &n);
+        }
+    }
+
+}
+
