@@ -481,11 +481,11 @@ function Call()
     var callback = arguments[arguments.length - 1];
     HttpRequest2(s, function (json)
     {
-        callback(json);
+        callback(null, json);
     },
-        function (e)
+        function (error)
         {
-            callback("error");
+            callback(error, null);
         });
 }
 

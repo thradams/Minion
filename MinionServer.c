@@ -7,6 +7,41 @@
 
 #define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
 
+typedef void(*NativeCallback)(void*);
+
+void NativeLogin(const char* user,
+                 const char* password, 
+                 NativeCallback callback,
+                 void* pData)
+{
+    callback(pData);
+}
+
+void NativeLoginHandlerCallback(void* pData)
+{
+    duk_context *ctx = (duk_context *)pData;
+    duk_eval_string(ctx, "_callbackvar('', '\"NativeOK\"'); delete _callbackvar;");
+}
+
+static duk_ret_t NativeLoginHandler(duk_context *ctx)
+{
+    //Native helper to receive the JS call see Make
+    char* user = duk_require_string(ctx, 0);
+    char* password = duk_require_string(ctx, 1);
+    
+    static int count = 0;
+    count++;
+
+    duk_require_function(ctx, 2);
+    duk_dup(ctx, 2);
+    duk_put_global_string(ctx, "_callbackvar");
+
+    NativeLogin(user, password, NativeLoginHandlerCallback, (void*)ctx);
+
+    
+    return 0;
+}
+
 
 /* Push file as a buffer. */
 bool fileio_push_file_buffer(duk_context *ctx, const char *filename)
@@ -91,15 +126,17 @@ static duk_ret_t NativePrint(duk_context *ctx)
 static duk_ret_t NCallback(duk_context *ctx)
 {
     //Native helper to receive the JS call see Make
-    char* s1 = duk_require_string(ctx, 0);
-    void* p1 = duk_require_pointer(ctx, 1);
-    void* p2 = duk_require_pointer(ctx, 2);
-    void(*callback)(const char* s1, void*) = (void(*)(const char*, void*))p1;
-    callback(s1, p2);
+    char* errorString = duk_require_string(ctx, 0);
+    char* resultJsonString = duk_require_string(ctx, 1);    
+    void* p1 = duk_require_pointer(ctx, 2);
+    void* p2 = duk_require_pointer(ctx, 3);
+    void(*callback)(const char* error, const char* json, void*) = 
+        (void(*)(const char*, const char*, void*))p1;
+    callback(errorString, resultJsonString, p2);
     return 0;
 }
 
-void SendValueBack(const char* json, void* pData)
+void SendValueBack(const char* errorString, const char* json, void* pData)
 {
     //Send the answer to the client side
     //the client side will run the callback
@@ -266,12 +303,14 @@ bool MinionServer_Init(struct MinionServer* server,
     duk_push_c_function(server->pDukContext, NativePrint, DUK_VARARGS);
     duk_put_global_string(server->pDukContext, "print");
 
-    duk_push_c_function(server->pDukContext, NCallback, 3);
+    duk_push_c_function(server->pDukContext, NCallback, 4);
     duk_put_global_string(server->pDukContext, "NCallback");
 
+    duk_push_c_function(server->pDukContext, NativeLoginHandler, 3);
+    duk_put_global_string(server->pDukContext, "LoginNative");
+    
 
-
-    duk_eval_string(server->pDukContext, "function Make(a, b) { return function(json) { var j = json; var a1 = a; var b1 = b; NCallback(j, a1, b1);}}");
+    duk_eval_string(server->pDukContext, "function Make(a, b) { return function(error, json) { var a1 = a; var b1 = b; NCallback(error, json, a1, b1);}}");
 
     char sjs[200] = { 0 };
     strcat(sjs, server->SOURCE_PATH);
