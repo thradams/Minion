@@ -12,7 +12,6 @@ struct Node
     bool SortedFlag;
 };
 
-void Node_Sort(struct Node* p);
 
 struct Board
 {
