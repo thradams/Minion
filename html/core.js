@@ -1,491 +1,158 @@
 var Design = {};
 
-function Create(node, screen, parent, parentElem)
+
+function CreateWebElement(node, screenObject, parentObject, parentHtmlElement)
 {
-    var child_n = node.firstChild;
-    while (child_n)
+  
+
+  var htmlElement = document.createElement(node.nodeName);
+  
+  for (var j = 0; j < node.attributes.length; j++)
+  {
+    htmlElement.setAttribute(node.attributes[j].name, node.attributes[j].value);
+  }
+
+  if (node.attributes["Name"])
+  {
+    var childName = node.attributes["Name"].nodeValue;
+    parentObject[childName] = htmlElement;
+  }
+
+  CreateCustom(node, screenObject, parentObject, htmlElement, false);
+
+  parentHtmlElement.appendChild(htmlElement);
+}
+
+
+function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement, setProperties)
+{
+  //Adiciona os filhos do objeto
+  var child_n = instanceNode.firstChild;
+  while (child_n)
+  {
+    if (child_n.nodeType === 3) /*#text*/
     {
-        if (child_n.nodeType == 3) /*#text*/
+      var txtNode = document.createTextNode(child_n.data);
+      if (parentHtmlElement)
+      {
+        parentHtmlElement.appendChild(txtNode);
+      }
+    } else
+    {
+      var classNameChild = child_n.nodeName;
+      if (Design[classNameChild])
+      {
+        var childObject = eval("new " + classNameChild + "();");
+
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(Design[classNameChild], "application/xml");
+        var templateNode = doc.firstChild;
+
+        var elemType = 'div';
+        if (templateNode.attributes["Class"])
         {
-            var txtNode = document.createTextNode(child_n.data);
-            parentElem.appendChild(txtNode);
-        } else
-        {
-            var className = child_n.nodeName;
-            if (Design[className])
-            {
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(Design[className], "application/xml");
-                var nodeClass = doc.firstChild;
-                //se nada for dito o controle eh sempre div
-                var elemType = 'div';
-                if (nodeClass.attributes["Class"])
-                {
-                    //se tiver o atributo class eh tipo
-                    elemType = nodeClass.attributes["Class"].nodeValue;
-                }
-                var childObject = eval("new " + className + "();");
-                //seta a propriedade tela do item
-                childObject.Screen = screen;
-                //seta o elemento dom
-                childObject.htmlElement = document.createElement(elemType);
-
-
-                Create(nodeClass, screen, childObject,
-                    childObject.htmlElement);
-                //seta os atributos da classe
-                for (var j = 0; j < nodeClass.attributes.length; j++)
-                {
-
-
-                    if (nodeClass.attributes[j].nodeName in childObject)
-                    {
-                        console.log("childObject[" + nodeClass.attributes[j].nodeName + "] = " + nodeClass.attributes[j].nodeValue);
-                        childObject[nodeClass.attributes[j].nodeName] =
-                            nodeClass.attributes[j].nodeValue;
-                    }
-                    else if (nodeClass.attributes[j].nodeName in childObject.htmlElement)
-                    {
-                        console.log("childObject.htmlElement[" + nodeClass.attributes[j].nodeName + "] = " + nodeClass.attributes[j].nodeValue);
-                        childObject.htmlElement[nodeClass.attributes[j].nodeName] =
-                            nodeClass.attributes[j].nodeValue;
-                    }
-                    else
-                    {
-                        console.log("Key [" + nodeClass.attributes[j].nodeName + "] NOT FOUND");
-                    }
-
-                }
-                //seta as propriedades da instancia
-                for (var j = 0; j < child_n.attributes.length; j++)
-                {
-
-                    if (child_n.attributes[j].nodeName in childObject)
-                    {
-                        console.log("childObject[" + child_n.attributes[j].nodeName + "] = " + child_n.attributes[j].nodeValue);
-                        childObject[child_n.attributes[j].nodeName] =
-                            child_n.attributes[j].nodeValue;
-                    }
-                    else if (child_n.attributes[j].nodeName in childObject.htmlElement)
-                    {
-                        console.log("childObject.htmlElement[" + child_n.attributes[j].nodeName + "] = " + child_n.attributes[j].nodeValue);
-                        childObject.htmlElement[child_n.attributes[j].nodeName] =
-                            child_n.attributes[j].nodeValue;
-                    }
-                    else
-                    {
-                        console.log("Key [" + child_n.attributes[j].nodeName + "] NOT FOUND");
-                        //Injeta Name
-                        childObject[child_n.attributes[j].nodeName] =
-                            child_n.attributes[j].nodeValue;
-
-                    }
-
-                }
-                //TODO inserir filhos da instancia ? tipo menu?
-                //adiciona do DOM de objetos
-                parent[childObject.Name] = childObject;
-
-                /*
-                Injeta uma propriedade Screen
-                */
-                childObject.Screen = screen;
-
-                //adiciona do DOM da web
-                parentElem.appendChild(childObject.htmlElement);
-            }
-            else
-            {
-                //nao eh custom
-                var htmlElement = document.createElement(className);
-                //vou setar os atruibutos deste element
-                for (var j = 0; j < child_n.attributes.length; j++)
-                {
-                    htmlElement.setAttribute(child_n.attributes[j].name,
-                        child_n.attributes[j].value);
-                }
-                Create(child_n, screen, parent, htmlElement);
-                parentElem.appendChild(htmlElement);
-            }
+          elemType = templateNode.attributes["Class"].nodeValue;
         }
-        child_n = child_n.nextSibling;
+        
+        if (child_n.attributes["Name"])
+        {
+          var childName = child_n.attributes["Name"].nodeValue;
+          thisObject[childName] = childObject;
+        }
+
+        childObject.htmlElement = document.createElement(elemType);
+
+        if (parentHtmlElement)
+        {
+          parentHtmlElement.appendChild(childObject.htmlElement);
+        }
+
+        if (screenObject && childObject !== screenObject)
+        {
+          childObject.Screen = screenObject;
+        }
+        
+        CreateCustom(templateNode /*node*/,
+          screenObject,
+          childObject /*thisObject*/,
+          childObject.htmlElement /*parentHtmlElement*/,
+          true);
+
+        CreateCustom(child_n /*node*/,
+          screenObject,
+          childObject /*thisObject*/,
+          childObject.htmlElement /*parentHtmlElement*/,
+          true);
+
+          if ("OnCreated" in childObject)
+          {
+            childObject.OnCreated();
+          }
+      }
+      else
+      {
+        CreateWebElement(child_n, screenObject, thisObject, parentHtmlElement);
+      }
     }
+    child_n = child_n.nextSibling;
+  }
+
+  if (setProperties)
+  {
+    for (var j = 0; j < instanceNode.attributes.length; j++)
+    {
+      if (instanceNode.attributes[j].nodeName in thisObject)
+      {
+        thisObject[instanceNode.attributes[j].nodeName] = instanceNode.attributes[j].nodeValue;
+      }
+      else if (instanceNode.attributes[j].nodeName in thisObject.htmlElement)
+      {
+        thisObject.htmlElement[instanceNode.attributes[j].nodeName] = instanceNode.attributes[j].nodeValue;
+      }
+      else
+      {
+
+      }
+    }
+  }
+}
+
+function InstanciateComponent(className)
+{
+  var childObject = eval("new " + className + "();");
+
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(Design[className], "application/xml");
+  var templateXML = doc.firstChild;
+
+  var elemType = 'div';
+  if (templateXML.attributes["Class"])
+  {
+    //se tiver o atributo class eh tipo
+    elemType = node.attributes["Class"].nodeValue;
+  }
+
+  childObject.htmlElement = document.createElement(elemType);
+
+  CreateCustom(templateXML,
+    childObject /*screenObject*/,
+    childObject,
+    childObject.htmlElement);
+
+  return childObject;
 }
 
 function ShowScreen(className)
 {
-    var parser0 = new DOMParser();
-    var doc0 = parser0.parseFromString("<" + className + "></" + className + ">", "application/xml");
-    var child_n = doc0.firstChild;
+  var childObject = InstanciateComponent(className);
+  document.body.innerText = "";
+  document.body.appendChild(childObject.htmlElement);
 
-    if (Design[className])
-    {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(Design[className], "application/xml");
-        var nodeClass = doc.firstChild;
-        //se nada for dito o controle eh sempre div
-
-        var elemType = 'div';
-        if (nodeClass.attributes["Class"])
-        {
-            //se tiver o atributo class eh tipo
-            elemType = nodeClass.attributes["Class"].nodeValue;
-        }
-        var childObject = eval("new " + className + "();");
-
-        //seta o elemento dom
-        childObject.htmlElement = document.createElement(elemType);
-
-        //Adiciona um link para editar esta pagina
-        var editLink = document.createElement('a');
-        editLink.target = "_blank";
-        editLink.href = "/edit/edit.html?name=" + className;
-        editLink.innerText = "Edit";
-        childObject.htmlElement.appendChild(editLink);
-        ////
-
-        var screen = childObject; //ele mesmo
-        Create(nodeClass, screen, childObject, childObject.htmlElement);
-
-        //seta os atributos da classe
-        for (var j = 0; j < nodeClass.attributes.length; j++)
-        {
-            if (nodeClass.attributes[j].nodeName in childObject)
-            {
-                console.log("childObject[" + nodeClass.attributes[j].nodeName + "] = " + nodeClass.attributes[j].nodeValue);
-                childObject[nodeClass.attributes[j].nodeName] =
-                    nodeClass.attributes[j].nodeValue;
-            }
-            else if (nodeClass.attributes[j].nodeName in childObject.htmlElement)
-            {
-                console.log("childObject.htmlElement[" + nodeClass.attributes[j].nodeName + "] = " + nodeClass.attributes[j].nodeValue);
-                childObject.htmlElement[nodeClass.attributes[j].nodeName] =
-                    nodeClass.attributes[j].nodeValue;
-            }
-            else
-            {
-                console.log("Key [" + nodeClass.attributes[j].nodeName + "] NOT FOUND");
-            }
-
-        }
-        //seta as propriedades da instancia
-        for (var j = 0; j < child_n.attributes.length; j++)
-        {
-            if (child_n.attributes[j].nodeName in childObject)
-            {
-                console.log("childObject[" + child_n.attributes[j].nodeName + "] = " + child_n.attributes[j].nodeValue);
-                childObject[child_n.attributes[j].nodeName] =
-                    child_n.attributes[j].nodeValue;
-            }
-            else if (child_n.attributes[j].nodeName in childObject.htmlElement)
-            {
-                console.log("childObject.htmlElement[" + child_n.attributes[j].nodeName + "] = " + child_n.attributes[j].nodeValue);
-                childObject.htmlElement[child_n.attributes[j].nodeName] =
-                    child_n.attributes[j].nodeValue;
-            }
-            else
-            {
-                console.log("Key [" + child_n.attributes[j].nodeName + "] NOT FOUND");
-                //Injeta Name
-                childObject[child_n.attributes[j].nodeName] =
-                    child_n.attributes[j].nodeValue;
-
-            }
-        }
-    }
-
-    document.body.innerText = "";
-    document.body.appendChild(childObject.htmlElement);
-
-    if ("OnShow" in screen)
-    {
-        childObject.OnShow();
-    }
-
-    return childObject;
+  console.log(JSON.stringify(childObject));
+  if ("OnShow" in childObject)
+  {    
+    childObject.OnShow();
+  }
 }
-////////
 
-//Runtime
-/**
- * xmlhttp.open("POST", "/json-handler");
-   xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-   xmlhttp.send(JSON.stringify({ "email": "hello@user.com", "response": { "name": "Tester" } }));
- */
-
-function HttpRequest(url, method, onRequestCompleted, onRequestFailed, data, timeoutMs) 
-{
-    try
-    {
-        //url = "\func\1";
-        var xhr = new XMLHttpRequest();
-        xhr.open(method, url);
-        xhr.timeout = (timeoutMs) ? timeoutMs : 5000;
-        var token = "token";
-        if (token)
-        {
-            /*
-            Used to prevent cross-site request forgery. Alternative header names are: X-CSRFToken[27] and X-XSRF-TOKEN[28]
-            https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields
-            case 19157
-            */
-            xhr.setRequestHeader("X-Csrf-Token", token);
-        }
-        else
-        {
-            xhr.setRequestHeader("X-Csrf-Token", "0");
-        }
-        xhr.onreadystatechange = function ()
-        {
-            try
-            {
-
-                switch (xhr.readyState)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        var xhr_status = xhr.status;
-                        /*var responseJson = {
-                            Message: IDS("SERVER_IS_NOT_RESPONDING") + " " + xhr.statusText,
-                            Code: ServerResponseCode.Fail
-                        };*/
-                        //if ((typeof navigator.onLine != "undefined") &&
-                        //  !navigator.onLine) {
-                        //                            responseJson =
-                        //                              {
-                        //                                Message: "Your Browser seems to be Offline.",
-                        //                              Code: ServerResponseCode.Fail
-                        //                        };
-                        //}
-                        if (xhr_status != 0 &&
-                            xhr_status != 304)
-                        {
-                            try
-                            {
-                                if (xhr.responseText)
-                                {
-                                    responseJson = JSON.parse(xhr.responseText);
-                                }
-                                else
-                                {
-                                    responseJson = {};
-                                }
-                            }
-                            catch (er)
-                            {
-                                if (xhr_status == 200)
-                                {
-                                    xhr_status = 0;
-                                }
-                                //responseJson =
-                                //  {
-                                //    Message: "Invalid server JSON response.",
-                                //  Code: ServerResponseCode.Fail
-                                //};
-                            }
-                        }
-                        switch (xhr_status)
-                        {
-                            case 0:
-                                onRequestFailed(responseJson);
-                                break;
-                            case 200:
-                                onRequestCompleted(responseJson);
-                                break;
-                            case 204:
-                                onRequestCompleted({});
-                                break;
-                            case 304:
-                                //responseJson.Code = ServerResponseCode.NotModified;
-                                onRequestFailed(responseJson);
-                                break;
-                            case 401:
-                                //if (responseJson.Code == ServerResponseCode.Disconnected ||
-                                //  responseJson.Code == ServerResponseCode.InvalidToken) {
-                                //this.OnDisconnected(responseJson);
-                                //onRequestFailed(responseJson);
-                                //}
-                                //else {
-                                //  onRequestFailed(responseJson);
-                                //}
-                                break;
-                            default:
-                                //onRequestFailed(responseJson);
-                                break;
-                        }
-                        break;
-                    default:
-                        console.error("Invalid XMLHttpRequest readyState: " + xhr.readyState);
-                }
-            }
-            catch (e)
-            {
-                onRequestFailed(e);
-            }
-        };
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send(data);
-    }
-    catch (e)
-    {
-        onRequestFailed(e);
-    }
-};
-
-function HttpRequest2(data, onRequestCompleted, onRequestFailed, timeoutMs) 
-{
-    try
-    {
-        //url = ;
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "\\call");
-
-        xhr.timeout = (timeoutMs) ? timeoutMs : 5000;
-        var token = "token";
-        if (token)
-        {
-            /*
-            Used to prevent cross-site request forgery. Alternative header names are: X-CSRFToken[27] and X-XSRF-TOKEN[28]
-            https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields
-            case 19157
-            */
-            xhr.setRequestHeader("X-Csrf-Token", token);
-        }
-        else
-        {
-            xhr.setRequestHeader("X-Csrf-Token", "0");
-        }
-        xhr.onreadystatechange = function ()
-        {
-            try
-            {
-
-                switch (xhr.readyState)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        var xhr_status = xhr.status;
-                        /*var responseJson = {
-                            Message: IDS("SERVER_IS_NOT_RESPONDING") + " " + xhr.statusText,
-                            Code: ServerResponseCode.Fail
-                        };*/
-                        //if ((typeof navigator.onLine != "undefined") &&
-                        //  !navigator.onLine) {
-                        //                            responseJson =
-                        //                              {
-                        //                                Message: "Your Browser seems to be Offline.",
-                        //                              Code: ServerResponseCode.Fail
-                        //                        };
-                        //}
-                        if (xhr_status != 0 &&
-                            xhr_status != 304)
-                        {
-                            try
-                            {
-                                if (xhr.responseText)
-                                {
-                                    responseJson = JSON.parse(xhr.responseText);
-                                }
-                                else
-                                {
-                                    responseJson = {};
-                                }
-                            }
-                            catch (er)
-                            {
-                                if (xhr_status == 200)
-                                {
-                                    xhr_status = 0;
-                                }
-                                //responseJson =
-                                //  {
-                                //    Message: "Invalid server JSON response.",
-                                //  Code: ServerResponseCode.Fail
-                                //};
-                            }
-                        }
-                        switch (xhr_status)
-                        {
-                            case 0:
-                                onRequestFailed(responseJson);
-                                break;
-                            case 200:
-                                onRequestCompleted(responseJson);
-                                break;
-                            case 204:
-                                onRequestCompleted({});
-                                break;
-                            case 304:
-                                //responseJson.Code = ServerResponseCode.NotModified;
-                                onRequestFailed(responseJson);
-                                break;
-                            case 401:
-                                //if (responseJson.Code == ServerResponseCode.Disconnected ||
-                                //  responseJson.Code == ServerResponseCode.InvalidToken) {
-                                //this.OnDisconnected(responseJson);
-                                //onRequestFailed(responseJson);
-                                //}
-                                //else {
-                                //  onRequestFailed(responseJson);
-                                //}
-                                break;
-                            default:
-                                //onRequestFailed(responseJson);
-                                break;
-                        }
-                        break;
-                    default:
-                        console.error("Invalid XMLHttpRequest readyState: " + xhr.readyState);
-                }
-            }
-            catch (e)
-            {
-                onRequestFailed(e);
-            }
-        };
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.send(data);
-
-    }
-    catch (e)
-    {
-        onRequestFailed(e);
-    }
-};
-
-function Call()
-{
-    var s = "[";
-    s += JSON.stringify(arguments[0]);
-    for (var i = 1; i < arguments.length - 1; i++)
-    {
-        s += ",";
-        s += JSON.stringify(arguments[i]);
-    }
-    s += "]";
-
-    var callback = arguments[arguments.length - 1];
-    HttpRequest2(s, function (json)
-    {
-        callback(null, json);
-    },
-        function (error)
-        {
-            callback(error, null);
-        });
-}
 

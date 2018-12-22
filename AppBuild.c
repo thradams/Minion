@@ -303,6 +303,7 @@ static void _lambda_0(const char* name, void* data)
 "    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n"\
 "    <title>Document</title>\n"\
 "    <script src=\"core.js\"></script>\n"\
+"    <script src=\"runtime.js\"></script>\n"\
 "\n"\
 "\n"
 
@@ -328,6 +329,16 @@ void BuildApp(const char* folderName, const char* rootFolder)
 
   CCopyFile(inputCSSNAme, outputCSSName);
 
+  outputCSSName[0] = 0;
+  strcat(outputCSSName, folderName);
+  strcat(outputCSSName, "/html/runtime.js");
+
+  inputCSSNAme[0] = 0;
+  strcat(inputCSSNAme, rootFolder);
+  strcat(inputCSSNAme, "/html/runtime.js");
+
+
+  CCopyFile(inputCSSNAme, outputCSSName);
 
 
   char buffer[MAX_PATH] = { 0 };
