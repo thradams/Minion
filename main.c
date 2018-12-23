@@ -28,19 +28,8 @@ char SOURCE_PATH[100] = { 0 };
 
 
 
-
-
-
-int main(int argc, char *argv[])
+void RunApp(const char* appName)
 {
-
-    if (argc < 2)
-    {
-        printf("please inform the name of the working folder");
-        return 1;
-    }
-
-
     UIActor_Init();
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -49,14 +38,14 @@ int main(int argc, char *argv[])
     ThreadPool_Init(NULL, 100);
 
     struct MinionServer minionServer;
-    
+
     struct Error error = ERROR_INIT;
 
-    if (MinionServer_Init(&minionServer, argv[1] , "./", &error))
-    {    
-      
+    if (MinionServer_Init(&minionServer, appName, "./", &error))
+    {
+
     }
-    
+
 
     s_screen_0_dirty = 1;
     int screen_number = 0;
@@ -125,6 +114,44 @@ int main(int argc, char *argv[])
     WSACleanup();
 
     MinionServer_Destroy(&minionServer);
+}
+
+
+int main(int argc, char *argv[])
+{
+    printf("Minions Castle\n");
+
+    if (argc < 2)
+    {
+        printf("please inform the name of the working folder");
+        return 1;
+    }
+
+    if (argc == 4 && (strcmp(argv[1], "create") == 0))
+    {
+        const char* templateName = argv[2];
+        const char* appName = argv[3];
+    }
+    else if (argc == 3 && (strcmp(argv[1], "build") == 0))
+    {
+        const char* appName = argv[2];
+        BuildApp(appName, "\.");
+    }
+    else if (argc == 3 && (strcmp(argv[1], "run") == 0))
+    {
+        const char* appName = argv[2];
+        RunApp(appName);
+    }
+    else
+    {
+        printf("usage:\n"
+            " create TemplateName AppName\n"
+            " build AppName\n"
+            " run AppName\n"
+        );
+    }
+
+
 
     return 0;
 }

@@ -64,6 +64,9 @@
     <ClInclude Include="Stream.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="fs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.c">
@@ -121,6 +124,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Stream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

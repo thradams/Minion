@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_Stream", "Test_Stream\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_JsonScanner", "Test_JsonScanner\Test_JsonScanner.vcxproj", "{E90F95A0-E8A6-4D58-A770-C06B42EC1801}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_fs", "Test_fs\Test_fs.vcxproj", "{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -143,6 +145,14 @@ Global
 		{E90F95A0-E8A6-4D58-A770-C06B42EC1801}.Release|x64.Build.0 = Release|x64
 		{E90F95A0-E8A6-4D58-A770-C06B42EC1801}.Release|x86.ActiveCfg = Release|Win32
 		{E90F95A0-E8A6-4D58-A770-C06B42EC1801}.Release|x86.Build.0 = Release|Win32
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Debug|x64.ActiveCfg = Debug|x64
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Debug|x64.Build.0 = Debug|x64
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Debug|x86.ActiveCfg = Debug|Win32
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Debug|x86.Build.0 = Debug|Win32
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Release|x64.ActiveCfg = Release|x64
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Release|x64.Build.0 = Release|x64
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Release|x86.ActiveCfg = Release|Win32
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -160,6 +170,7 @@ Global
 		{0E62F1F1-F1F1-41DF-A83B-F12A307128CC} = {4586F30F-ADBB-4D0E-AE28-6D84C69ACF69}
 		{62D9780B-0990-4C0E-B497-9581CEAA794E} = {4586F30F-ADBB-4D0E-AE28-6D84C69ACF69}
 		{E90F95A0-E8A6-4D58-A770-C06B42EC1801} = {4586F30F-ADBB-4D0E-AE28-6D84C69ACF69}
+		{0D6F46C6-0E43-460C-86CC-B6D090AB21CD} = {4586F30F-ADBB-4D0E-AE28-6D84C69ACF69}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5ECD421-3C2A-4A33-8722-8B6A205307AD}

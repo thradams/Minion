@@ -233,7 +233,7 @@ static void _lambda_0(const char* name, void* data)
     strcat(inputXMLName, folderName);
     strcat(inputXMLName, "/source/");
     strncat(inputXMLName, name, l - 2);
-    strcat(inputXMLName, "xml");
+    strcat(inputXMLName, "html");
 
 
     FILE * outputJS = fopen(outputJSName, "w");
@@ -365,4 +365,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
 }
 
 
+void CreateApp(const char* templateFolder, const char* appFolder)
+{
 
+}
