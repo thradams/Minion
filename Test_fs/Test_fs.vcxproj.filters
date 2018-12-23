@@ -10,5 +10,13 @@
     <ClCompile Include="Test_fs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\fs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\fs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

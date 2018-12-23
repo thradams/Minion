@@ -13,9 +13,15 @@
     <ClCompile Include="..\AppBuild.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\fs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AppBuild.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

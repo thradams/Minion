@@ -154,10 +154,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\AppBuild.c" />
+    <ClCompile Include="..\fs.c" />
     <ClCompile Include="Test_BuildApp.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AppBuild.h" />
+    <ClInclude Include="..\fs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
