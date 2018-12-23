@@ -124,9 +124,8 @@ static void _lambda_0(const char* name, void* data)
 
 
 #define PART2 \
-"    <script>function OnLoad() { ShowScreen(\"Tela1\"); } </script>\n\n"\
 " </head>\n"\
-"   <body onload=\"OnLoad()\">\n"\
+"   <body onload=\"Main()\">\n"\
 "   </body>\n"\
 "</html>\n"
 
