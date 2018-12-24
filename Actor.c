@@ -97,7 +97,7 @@ void Actor_Post(struct Actor* actor,
 {
     mtx_lock(&actor->Mutex);
 
-    TaskQueue_Push(&actor->TaskQueue, taskFunction, pCapture, captureSizeBytes);
+    TaskQueue_Push(&actor->TaskQueue, taskFunction, pCapture, (int)captureSizeBytes);
 #ifdef BOARD
     AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
 #endif

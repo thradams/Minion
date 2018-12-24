@@ -75,7 +75,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
         {
             do
             {
-                int l = strlen(di.fileName);
+                int l = (int) strlen(di.fileName);
                 if (l > 3 &&
                     di.fileName[l - 3] == '.' &&
                     di.fileName[l - 2] == 'j'   &&
@@ -83,7 +83,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
                 {
                     fprintf(indexHtmlFile, "    <script src=\"%s\"></script>\n", di.fileName);
 
-                    int l = strlen(di.fileName);
+                    int l = (int)strlen(di.fileName);
 
                     //copia o JS para o destino
                     char inputJSName[FS_MAX_PATH] = { 0 };
@@ -116,7 +116,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
                         fprintf(outputJS, "Design.%s = `", justName);
                         while (!feof(inputXML))
                         {
-                            char c = fgetc(inputXML);
+                            int c = fgetc(inputXML);
                             if (c != EOF)
                                 putc(c, outputJS);
                         }
@@ -128,7 +128,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
                     {
                         while (!feof(inputJS))
                         {
-                            char c = fgetc(inputJS);
+                            int c = fgetc(inputJS);
                             if (c != EOF)
                                 putc(c, outputJS);
                         }

@@ -46,7 +46,7 @@ int TaskQueue_Push(struct TaskQueue * pAsyncTaskQueue,
       if (pCapture != NULL)
       {
         assert(captureSizeBytes <= sizeof(pAsyncTaskQueue->pHead->pCapture));
-        memcpy(pAsyncTaskQueue->pHead->pCapture, pCapture, captureSizeBytes);
+        memcpy(pAsyncTaskQueue->pHead->pCapture, pCapture, (int) captureSizeBytes);
       }
 
       pAsyncTaskQueue->pHead++;

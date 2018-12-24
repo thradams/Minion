@@ -1,12 +1,22 @@
-#include <winsock2.h>
-#include <Windows.h>
+//#include <winsock2.h>
+//#include <Windows.h>
+#include "Socket.h"
 #include <assert.h>
 #include "HttpConnection.h"
-#include "board.h"
+#include "Board.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include <string.h>
+#include <time.h>
 extern char ROOT_PATH[100];
+
+
+
+#ifdef _WIN32
+#define gmtime_r gmtime_s
+#else
+#define MAX_PATH 256
+#endif
 
 bool HttpConnection_Init(struct HttpConnection* connection, Socket socket, SSL_CTX *ctx, struct Error* error)
 {
@@ -46,7 +56,7 @@ bool HttpConnection_Init(struct HttpConnection* connection, Socket socket, SSL_C
             if (ssl_error <= 0)
             {
               //https://www.openssl.org/docs/ssl/SSL_get_error.html
-              auto reason = SSL_get_error(ssl, ssl_error);
+              int reason = SSL_get_error(ssl, ssl_error);
               switch (reason)
               {
               case SSL_ERROR_NONE:
@@ -256,7 +266,8 @@ bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct 
   }
   else
   {
-    result = recv(connection->Socket, ch, 1, 0);
+     
+    result = Socket_Recv(connection->Socket, ch, 1, 0);
     if (result > 0)
     {
       //ok
@@ -271,8 +282,8 @@ bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct 
 
     if (result == SOCKET_ERROR)
     {
-      int socketError = WSAGetLastError();
-      Error_Set(error, "%s", GetSocketErrorA(socketError));
+      //int socketError = WSAGetLastError();
+        Error_Set(error, "error");// , GetSocketErrorA(socketError));
       //if (socketError == 0)
       //{
         //ASSERT(false);
@@ -283,9 +294,9 @@ bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct 
   return Error_IsEmpty(error);
 }
 
-size_t HttpConnection_PushBytes(struct HttpConnection* connection, const char* bytes, size_t len, struct Error* error)
+int HttpConnection_PushBytes(struct HttpConnection* connection, const char* bytes, size_t len, struct Error* error)
 {
-  size_t r = 0;
+  int r = 0;
   if (connection->io != NULL)
   {
     r = BIO_write(connection->io, bytes, (int)len);
@@ -402,7 +413,7 @@ bool HttpConnection_SendJson(struct HttpConnection* connection, const char* json
     int len = strlen(jsonString);
     char buffer[500];
     int bufferSize = 500;
-    int number_characters_written = sprintf_s(buffer,
+    int number_characters_written = snprintf(buffer,
         bufferSize,
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: text/json;charset=utf-8\r\n"
@@ -456,7 +467,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
   }
 
 
-  struct _stat info;
+ 
 
   if (fileName != NULL)
   {
@@ -464,15 +475,28 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
     time_t curtime = time(NULL);
     char currentTimeUTC[200];
     struct tm s1;
-    gmtime_s(&s1, &curtime);
-    strftime(currentTimeUTC, 200, "%a, %d %b %Y %H:%M:%S GMT", &s1);
+    //gmtime_s(&s1, &curtime);
+    gmtime_r(&s1, &curtime);
 
+    strftime(currentTimeUTC, 200, "%a, %d %b %Y %H:%M:%S GMT", &s1);
+    bool bStat = false;
+#ifdef _WIN32
+    struct _stat info;
+    if (_stat(fileName, &info) == 0)
+        bStat = true;
+#else
+    struct stat info;
+    if (stat(fileName, &info))
+    {
+        bStat = true;
+    }
+#endif
 
     char lastModified[200];
-    if (_stat(fileName, &info) == 0)
+    if (bStat)
     {
       struct tm s;
-      gmtime_s(&s, &info.st_mtime);
+      gmtime_r(&s, &info.st_mtime);
       strftime(lastModified, 200, "%a, %d %b %Y %H:%M:%S GMT", &s);
 
       if (fileName[0] == '/')
@@ -499,7 +523,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
 
             if (lastModified[0] = 0)
             {
-              number_characters_written = sprintf_s(sendbuf,
+              number_characters_written = snprintf(sendbuf,
                 bufferSize,
                 "HTTP/1.1 200 OK\r\n"
                 "Date: %s\r\n"
@@ -517,7 +541,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
             }
             else
             {
-              number_characters_written = sprintf_s(sendbuf,
+              number_characters_written = snprintf(sendbuf,
                 bufferSize,
                 "HTTP/1.1 200 OK\r\n"
                 "Date: %s\r\n"
@@ -607,20 +631,25 @@ bool HttpConnection_SendFileIfModified(struct HttpConnection* connection,
       //fileName++; //skip this char
     }
 
+#ifdef _WIN32
     struct _stat info;
-
     _stat(fileName, &info);
+#else
+struct stat info;
+stat(fileName, &info);
+#endif
+
 
     time_t curtime = time(NULL);
     char currentTimeUTC[200];
     struct tm s1;
-    gmtime_s(&s1, &curtime);
+    gmtime_r(&s1, &curtime);
     strftime(currentTimeUTC, 200, "%a, %d %b %Y %H:%M:%S GMT", &s1);
 
     if (info.st_mtime <= ifmodifiedtime)
     {
       char buffer[200];
-      int number_characters_written = sprintf_s(buffer,
+      int number_characters_written = snprintf(buffer,
         "HTTP/1.1 304 Not Modified\r\n"
         "Date: %s\r\n"
         "Connection: %s\r\n"

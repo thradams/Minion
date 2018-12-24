@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#define strdup _strdup 
+#else
+#endif
+
 void Stream_Destroy(struct Stream* stream)
 {
   free((void*)stream->Text);
@@ -95,7 +100,7 @@ void Stream_BuyString(struct Stream* stream, const char* sinkString)
 
 void Stream_CopyString(struct Stream* stream, const char* s)
 {
-  char* copy = _strdup(s);
+  char* copy = strdup(s);
   Stream_BuyString(stream, copy);
 }
 

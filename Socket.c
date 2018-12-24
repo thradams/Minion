@@ -1,6 +1,25 @@
 
-#include "socket.h"
+#include "Socket.h"
+#include <limits.h>
 
+//https://www.thegeekstuff.com/2011/12/c-socket-programming/
+
+#ifdef _WIN32
+
+int Socket_Recv(Socket socket, void *buf, size_t n, int flags)
+{
+    return recv(socket, buf, n, flags);
+}
+
+void SocketStaticInit()
+{
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+}
+void SocketStaticDestroy()
+{
+    WSACleanup();
+}
 
 
 const wchar_t* GetSocketErrorW(int error)
@@ -882,10 +901,28 @@ const char* GetSocketErrorA(int error)
 
   return "";
 }
+#else
+
+void SocketStaticInit()
+{
+}
+void SocketStaticDestroy()
+{
+}
+
+int Socket_Recv(Socket socket, void *buf, size_t n, int flags)
+{
+    return recv(socket, buf, n, flags);
+}
+#endif
 
 void Socket_Close(Socket socket)
 {
-  int i = closesocket(socket);
+#ifdef _WIN32
+  /*int i =*/ closesocket(socket);
+#else
+    /*int i =*/ close(socket);
+#endif
 }
 
 
@@ -907,7 +944,7 @@ size_t Socket_PushBytes(Socket socket,
     // How many bytes we send in this iteration
     int k = len - sent > INT_MAX ? INT_MAX : (int)(len - sent);
 
-    int bytesent = send(socket, bytes + sent, k, 0);
+    int bytesent = (int)send(socket, bytes + sent, k, 0);
     if (bytesent == SOCKET_ERROR)
     {
       //*socketerror = WSAGetLastError();
@@ -947,6 +984,7 @@ int Socket_Bind(Socket socket,
   return i;
 }
 
+
 int Socket_Listen(Socket socket, int backlog)
 {
   //socketerror = 0;//out
@@ -964,7 +1002,7 @@ Socket Socket_Accept(Socket socket, struct sockaddr * addr, int *addrlen)
 {
   //socketerror = 0;//out
 
-  SOCKET s = accept(socket, addr, addrlen);
+  Socket s = accept(socket, addr, addrlen);
 
   if (s == INVALID_SOCKET)
   {
@@ -994,11 +1032,14 @@ bool Socket_IsReadyToReceive(Socket sock, int intervalMs)
   fd_set fds;
   FD_ZERO(&fds);
 
+#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable : 4127 )
   FD_SET(sock, &fds);
 #pragma warning( pop )
-
+#else
+  FD_SET(sock, &fds);
+#endif
 
   struct timeval tv;
   tv.tv_sec = 0;
@@ -1043,11 +1084,20 @@ void Socket_CloseGracefully(Socket socket)
 
   do
   {
-    n = recv(socket, buf, sizeof(buf), 0);
+    n = (int)recv(socket, buf, sizeof(buf), 0);
   } while (n > 0);
 
-  (void)closesocket(socket);
+  Socket_Close(socket);
+  
   socket = INVALID_SOCKET;
 }
-
+ int SetNonBlockingMode(Socket sock)
+{
+    unsigned long on = 1;
+#ifdef _WIN32
+    return ioctlsocket(sock, FIONBIO, &on);
+#else
+    return ioctl(sock, FIONBIO, &on);
+#endif
+}
 

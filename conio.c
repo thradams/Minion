@@ -382,11 +382,11 @@ void resetTermios(void)
 /* Read 1 character - echo defines echo mode */
 static char getch_(int echo)
 {
-  char ch;
+  int ch;
   initTermios(echo);
   ch = getchar();
   resetTermios();
-  return ch;
+  return (char)ch;
 }
 
 /* Read 1 character without echo */

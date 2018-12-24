@@ -173,7 +173,7 @@ bool StrBuilder_Append(StrBuilder* p,
     return true;
   }
 
-  return StrBuilder_AppendN(p, source, strlen(source));
+  return StrBuilder_AppendN(p, source, (int)strlen(source));
 }
 
 void StrBuilder_Clear(StrBuilder* p)

@@ -22,3 +22,5 @@ void Board_Init(struct Board* p);
 void Board_Destroy(struct Board* p);
 void Board_Add(struct Board * p, const wchar_t * key);
 void Board_Print(struct Board * p);
+
+void Node_Sort(struct Node* p);

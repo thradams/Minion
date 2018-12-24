@@ -70,7 +70,7 @@ int ThreadPool_Init(struct ThreadPool* pThreadPool, size_t tasksCapacity)
   if (pThreadPool == NULL)
     pThreadPool = &MainThreadPool;
 
-  TaskQueue_Init(&pThreadPool->TaskQueue, tasksCapacity);
+  TaskQueue_Init(&pThreadPool->TaskQueue, (int)tasksCapacity);
 
   pThreadPool->Stopping = false;
 
@@ -121,7 +121,7 @@ int ThreadPool_Push(struct ThreadPool * pThreadPool,
   }
   else
   {
-    TaskQueue_Push(&pThreadPool->TaskQueue, pTaskFunction, pCapture, captureSizeBytes);
+    TaskQueue_Push(&pThreadPool->TaskQueue, pTaskFunction, pCapture, (int)captureSizeBytes);
 #ifdef BOARD
     AddPost(L"Thread %d/%d", pThreadPool->TaskQueue.Count, pThreadPool->TaskQueue.Capacity);
 #endif
@@ -168,7 +168,7 @@ void ThreadPool_Join(struct ThreadPool* pThreadPool)
   for (size_t i = 0; i < POOL_SIZE; ++i)
   {
     int res;
-    int r = thrd_join(pThreadPool->Threads[i], &res);
+    /*int r =*/ thrd_join(pThreadPool->Threads[i], &res);
    // assert(r == thrd_success);
   }
 

@@ -7,7 +7,7 @@
 #include "HttpConnection.h"
 #include "Board.h"
 #include "AppBuild.h"
-
+#include <string.h>
 
 int CaseInsensitiveCompare(char const *a, char const *b)
 {
@@ -362,7 +362,7 @@ bool HttpServer_Init(struct HttpServer* httpServer,
     struct addrinfo* ai = NULL;
 
     struct addrinfo hints;
-    ZeroMemory(&hints, sizeof(hints));
+    memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
@@ -399,7 +399,7 @@ bool HttpServer_Init(struct HttpServer* httpServer,
     {
         //socketerror = WSAGetLastError();
     }
-    int socketerror = 0;
+    //int socketerror = 0;
     iRes = Socket_Listen(httpServer->listenSocket, SOMAXCONN);
     if (iRes == SOCKET_ERROR)
     {

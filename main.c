@@ -31,8 +31,7 @@ char SOURCE_PATH[100] = { 0 };
 void RunApp(const char* appName)
 {
     UIActor_Init();
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    SocketStaticInit();
 
 
     ThreadPool_Init(NULL, 100);
@@ -103,15 +102,20 @@ void RunApp(const char* appName)
                 break;
 
         }
-
+#ifdef _WIN32
         Sleep(500);
+#else
+#endif
+
     }
 
     ThreadPool_Stop(NULL);
     ThreadPool_Join(NULL);
     UIActor_Destroy();
 
-    WSACleanup();
+    SocketStaticDestroy();
+
+
 
     MinionServer_Destroy(&minionServer);
 }

@@ -10,10 +10,7 @@ struct Error
 };
 #define ERROR_INIT {0}
 
-inline bool Error_IsEmpty(struct Error* error)
-{
-  return error->Msg[0] == '\0';
-}
+bool Error_IsEmpty(struct Error* error);
 
 void Error_SetVa(struct Error * p, const char* fmt, va_list va);
 

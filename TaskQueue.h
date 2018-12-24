@@ -14,7 +14,7 @@ typedef void(*TaskFunction)(enum TASK_ACTION action, void* pData);
 struct Task
 {
   TaskFunction pTaskFunction;
-  __declspec (align(8)) void* pCapture[4];
+  void* pCapture[4];
 };
 
 

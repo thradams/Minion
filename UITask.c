@@ -57,7 +57,7 @@ void UIActor_Post(TaskFunction taskFunction,
   size_t captureSizeBytes)
 {
   mtx_lock(&UIActor.Mutex);
-  TaskQueue_Push(&UIActor.TaskQueue, taskFunction, pCapture, captureSizeBytes);
+  TaskQueue_Push(&UIActor.TaskQueue, taskFunction, pCapture, (int)captureSizeBytes);
   s_screen_1_dirty = 1;
   mtx_unlock(&UIActor.Mutex);
 

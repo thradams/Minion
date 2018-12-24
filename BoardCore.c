@@ -2,6 +2,12 @@
 #include <string.h>
 #include "BoardCore.h"
 #include <stdio.h>
+#include <wchar.h>
+
+#ifdef _WIN32
+#else
+#define _wcsdup wcsdup
+#endif
 
 struct Node* Node_Create()
 {
@@ -202,8 +208,13 @@ void Node_AddNode(struct Node* p, struct  Node *pNewNode)
 void Node_Add(struct Node* p, const wchar_t* key, const wchar_t* text)
 {
     struct Node* pNewNode = Node_Create();
+#ifdef _WIN32
     pNewNode->Key = _wcsdup(key);
     pNewNode->Text = _wcsdup(text);
+#else
+    pNewNode->Key = wcsdup(key);
+    pNewNode->Text = wcsdup(text);
+#endif
     Node_AddNode(p, pNewNode);
 }
 
@@ -310,7 +321,7 @@ void Board_Add(struct Board * p, const wchar_t * key)
             {
                 //o que ele nao awchar_t vai criando..
                 struct Node* pNew = Node_Create();
-                pNew->Key = wstrndup(key2, key2size);
+                pNew->Key = wstrndup(key2, (size_t)key2size);
 
                 Node_AddNode(pCurrent, pNew);
                 pCurrent = pNew;

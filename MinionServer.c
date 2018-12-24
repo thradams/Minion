@@ -4,6 +4,19 @@
 #include "Board.h"
 #include "JsonScanner.h"
 #include <assert.h>
+#include <stdlib.h>
+
+#ifdef _WIN32
+#else
+
+char * _itoa( int value, char *buffer, int radix )
+{
+    snprintf(buffer, 100, "%d", value);
+    return buffer;
+}
+
+#endif
+
 
 #define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
 
@@ -33,7 +46,7 @@ void NativeLoginHandlerCallback(void* pData)
     
     char buffer[500];
     int bufferSize = 500;
-    int number_characters_written = sprintf_s(buffer,
+    int number_characters_written = snprintf(buffer,
         bufferSize,
         "%s('', '\"NativeOK\"'); delete %s;",
         pCapture->CallbackName,
@@ -347,7 +360,7 @@ bool MinionServer_Init(struct MinionServer* server,
         if (duk_peval(server->pDukContext) != 0)
         {
             //falhou
-            const char* errors = duk_safe_to_string(server->pDukContext, -1);
+            //const char* errors = duk_safe_to_string(server->pDukContext, -1);
         }
         else
         {

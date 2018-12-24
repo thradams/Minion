@@ -1,5 +1,9 @@
 #include "Error.h"
 
+bool Error_IsEmpty(struct Error* error)
+{
+    return error->Msg[0] == '\0';
+}
 
 void Error_SetVa(struct Error * p, const char* fmt, va_list va)
 {

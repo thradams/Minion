@@ -49,7 +49,7 @@ struct HttpConnection* HttpConnection_Create(Socket socket, SSL_CTX *ssl, struct
 bool HttpConnection_Init(struct HttpConnection* connection, Socket socket, SSL_CTX *ctx, struct Error* error);
 void HttpConnection_Delete(struct HttpConnection* h);
 
-size_t HttpConnection_PushBytes(struct HttpConnection* connection, const char* bytes, size_t len, struct Error* error);
+int HttpConnection_PushBytes(struct HttpConnection* connection, const char* bytes, size_t len, struct Error* error);
 bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct Error* error);
 
 bool HttpConnection_SendFile(struct HttpConnection* connection,
