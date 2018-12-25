@@ -40,7 +40,7 @@ void RunApp(const char* appName)
 
     struct Error error = ERROR_INIT;
 
-    if (MinionServer_Init(&minionServer, appName, "./", &error))
+    if (MinionServer_Init(&minionServer, appName, "../../..", &error))
     {
 
     }
@@ -139,10 +139,13 @@ int main(int argc, char *argv[])
     else if (argc == 3 && (strcmp(argv[1], "build") == 0))
     {
         const char* appName = argv[2];
-        BuildApp(appName, "\.");
+        BuildApp(appName, ".");
     }
     else if (argc == 3 && (strcmp(argv[1], "run") == 0))
     {
+        char currentPath[256] = { 0 };
+        fs_current_path(currentPath);
+        printf("Current Path:\n", currentPath);
         const char* appName = argv[2];
         RunApp(appName);
     }

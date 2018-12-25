@@ -70,7 +70,10 @@ void directory_iterator_destroy(struct directory_iterator* di)
 {
     FindClose((HANDLE)di->handle);
 }
-
+bool fs_current_path(char* pathOut)
+{
+    return GetCurrentDirectory(pathOut, MAX_PATH);
+}
 
 #else
 #include <sys/stat.h>
@@ -80,11 +83,18 @@ void directory_iterator_destroy(struct directory_iterator* di)
 #include <errno.h>
 #include <dirent.h>
 #include <string.h>
+#include <unistd.h>
+
 bool fs_create_directory(const char* path, struct error_code* ec)
 {
     //http://pubs.opengroup.org/onlinepubs/009695399/functions/mkdir.html
     //http://www.gnu.org/software/coreutils/mkdir
     return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
+}
+
+bool fs_current_path(char* pathOut)
+{
+    return getcwd(pathOut, 256);
 }
 
 bool fs_copy_file(const char* pathfrom,

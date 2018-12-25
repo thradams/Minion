@@ -77,6 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>/usr/include/</IncludePath>
     <LibraryPath>/usr/lib/x86_64-linux-gnu/</LibraryPath>
+    <AdditionalSourcesToCopyMapping>.\MyApp\html\index.html;.\MyApp\source\display.html;.\MyApp\source\display.js;.\MyApp\source\global.css;.\MyApp\source\home.html;.\MyApp\source\home.js;.\MyApp\source\pagelink.css;.\MyApp\source\pagelink.html;.\MyApp\source\pagelink.js;.\MyApp\source\topnavigation.css;.\MyApp\source\topnavigation.html;.\MyApp\source\topnavigation.js;.\MyApp\source\topnavigationitem.html;.\MyApp\source\topnavigationitem.js;.\html\core.js;.\html\runtime.js</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>/usr/include/</IncludePath>

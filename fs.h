@@ -14,6 +14,8 @@ bool fs_copy_file(const char* pathfrom, const char* pathto, struct error_code* e
 bool fs_exists(const char* path, struct error_code* ec);
 bool fs_remove(const char* path, struct error_code* ec);
 
+bool fs_current_path(char* pathOut);
+
 
 struct directory_iterator
 {

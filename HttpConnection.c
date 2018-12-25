@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <time.h>
-extern char ROOT_PATH[100];
 
 
 
@@ -486,7 +485,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
         bStat = true;
 #else
     struct stat info;
-    if (stat(fileName, &info))
+    if (stat(fileName, &info) == 0)
     {
         bStat = true;
     }
@@ -605,7 +604,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
     }
     else
     {
-      Error_Set(error, "not found?");
+      Error_Set(error, "%s not found?", fileName);
     }
   }
   else
