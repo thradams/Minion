@@ -3,6 +3,9 @@
 #include <limits.h>
 
 //https://www.thegeekstuff.com/2011/12/c-socket-programming/
+//sudo apt-get install openssl
+//sudo apt-get install libssl-dev
+//sudo apt-get update
 
 #ifdef _WIN32
 

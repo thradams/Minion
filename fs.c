@@ -7,6 +7,15 @@
 
 #pragma comment(lib, "Shlwapi.lib")
 
+void fs_path_split(const char* Path,
+  char* Drive,
+  char* Directory,
+  char* Filename,
+  char* Extension)
+{
+  _splitpath(Path, Drive, Directory, Filename, Extension);
+}
+
 bool fs_remove(const char* path, struct error_code* ec)
 {
     return RemoveDirectoryA(path);
@@ -72,7 +81,22 @@ void directory_iterator_destroy(struct directory_iterator* di)
 }
 bool fs_current_path(char* pathOut)
 {
-    return GetCurrentDirectory(pathOut, MAX_PATH);
+    /*
+    If the function succeeds, the return value specifies the number 
+    of characters that are written to the buffer, not including the 
+    terminating null character.
+    If the function fails, the return value is zero.To get extended error 
+    information, call GetLastError.
+    If the buffer that is pointed to by lpBuffer is not large enough, 
+    the return value specifies the required size of the buffer, 
+    in characters, including the null - terminating character.
+    */
+    DWORD r = GetCurrentDirectoryA(MAX_PATH, pathOut);
+    if (r == 0)
+    {
+      //GetLastError();
+    }
+    return r != 0;
 }
 
 #else
@@ -199,5 +223,73 @@ void directory_iterator_destroy(struct directory_iterator* di)
     closedir((DIR*)di->handle);
 }
 
+
+
+void fs_path_split(const char* Path,
+  char* Drive,
+  char* Directory,
+  char* Filename,
+  char* Extension)
+{
+  char* CopyOfPath = (char*)Path;
+  int Counter = 0;
+  int Last = 0;
+  int Rest = 0;
+
+  // no drives available in linux .
+  // extensions are not common in linux
+  // but considered anyway
+  Drive = NULL;
+
+  while (*CopyOfPath != '\0')
+  {
+    // search for the last slash
+    while (*CopyOfPath != '/' && *CopyOfPath != '\0')
+    {
+      CopyOfPath++;
+      Counter++;
+    }
+    if (*CopyOfPath == '/')
+    {
+      CopyOfPath++;
+      Counter++;
+      Last = Counter;
+    }
+    else
+      Rest = Counter - Last;
+  }
+  // directory is the first part of the path until the
+  // last slash appears
+  strncpy(Directory, Path, Last);
+  // strncpy doesnt add a '\0'
+  Directory[Last] = '\0';
+  // Filename is the part behind the last slahs
+  strcpy(Filename, CopyOfPath -= Rest);
+  // get extension if there is any
+  while (*Filename != '\0')
+  {
+    // the part behind the point is called extension in windows systems
+    // at least that is what i thought apperantly the '.' is used as part
+    // of the extension too .
+    if (*Filename == '.')
+    {
+      while (*Filename != '\0')
+      {
+        *Extension = *Filename;
+        Extension++;
+        Filename++;
+      }
+    }
+    if (*Filename != '\0')
+    {
+      Filename++;
+    }
+  }
+  *Extension = '\0';
+  return;
+}
+
 #endif
+
+
 

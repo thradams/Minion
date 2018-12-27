@@ -14,8 +14,8 @@
 #include "AppBuild.h"
 #include "duktape.h"
 #include "MinionServer.h"
+#include "fs.h"
 
-//#include <Windows.h>
 
 int s_screen_1_dirty = 0;
 int s_screen_0_dirty = 0;
@@ -28,8 +28,11 @@ char SOURCE_PATH[100] = { 0 };
 
 
 
-void RunApp(const char* appName)
+void RunApp(const char* rootPath, const char* appName)
 {
+    //rootPath is the path were we can find the sources
+    //that are unchanged like runtime.js
+
     UIActor_Init();
     SocketStaticInit();
 
@@ -40,7 +43,7 @@ void RunApp(const char* appName)
 
     struct Error error = ERROR_INIT;
 
-    if (MinionServer_Init(&minionServer, appName, "../../..", &error))
+    if (MinionServer_Init(&minionServer, appName, rootPath, &error))
     {
 
     }
@@ -143,11 +146,32 @@ int main(int argc, char *argv[])
     }
     else if (argc == 3 && (strcmp(argv[1], "run") == 0))
     {
-        char currentPath[256] = { 0 };
-        fs_current_path(currentPath);
-        printf("Current Path:\n", currentPath);
-        const char* appName = argv[2];
-        RunApp(appName);
+
+      char Drive[256];
+        char Directory[256];
+        char Filename[256];
+        char Extension[256];
+
+      fs_path_split(argv[0],
+        Drive,
+        Directory,
+        Filename,
+        Extension);
+        
+      char currentPath[256] = { 0 };
+      fs_current_path(currentPath);
+      printf("Current Path:%s\n", currentPath);
+        
+#ifdef _WIN32
+      const char* appName = argv[2];
+      RunApp("./", appName);
+#else
+      //home/tra/projects/MinionLinux/bin/x64/Debug/
+      const char* appName = argv[2];
+      RunApp("..\..\..", appName);
+#endif
+        
+      
     }
     else
     {

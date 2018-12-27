@@ -71,3 +71,6 @@ size_t Socket_PushBytes(Socket socket,
 
 
 int SetSockTimeout(Socket sock, int milliseconds);
+
+void SocketStaticInit();
+void SocketStaticDestroy();

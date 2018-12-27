@@ -1,0 +1,76 @@
+.SmallControl {
+    margin: 0px 1px 1px 0px;
+    border: 3px solid transparent;
+    border-image: none;
+    width: 150px;
+    height: 150px;
+    font-family: Arial;
+    display: inline-block;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+    color: white;
+    background-color: rgb(180, 102, 49);
+}
+
+.BigControl {
+    margin: 0px 1px 1px 0px;
+    border: 3px solid transparent;
+    border-image: none;
+    width: 300px;
+    height: 150px;
+    font-family: Arial;
+    display: inline-block;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+    color: white;
+    background-color: rgb(180, 102, 49);
+}
+
+.TitleWrap {
+    left: 0px;
+    top: 0px;
+    height: 52px;
+    right: 0px;
+    position: absolute;
+    background-color: rgb(200, 113, 55);
+}
+
+.Title {
+    left: 7px;
+    top: 6px;
+    right: 7px;
+    overflow: hidden;
+    font-size: 19px;
+    font-weight: bold;
+    white-space: nowrap;
+    position: absolute;
+    text-overflow: ellipsis;
+}
+
+.SubTitle {
+    left: 7px;
+    height: 21px;
+    right: 7px;
+    bottom: 6px;
+    line-height: 21px;
+    overflow: hidden;
+    font-size: 13px;
+    vertical-align: text-bottom;
+    white-space: nowrap;
+    position: absolute;
+    text-overflow: ellipsis;
+}
+
+.TimeInfo {
+    width: 22px;
+    height: 21px;
+    text-align: right;
+    right: 7px;
+    bottom: 6px;
+    line-height: 21px;
+    font-size: 11px;
+    vertical-align: text-bottom;
+    position: absolute;
+}

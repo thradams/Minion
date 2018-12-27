@@ -166,7 +166,7 @@ static duk_ret_t NCallback(duk_context *ctx)
 {
     //Native helper to receive the JS call see Make
     char* errorString = duk_require_string(ctx, 0);
-    char* resultJsonString = duk_require_string(ctx, 1);    
+    const char* resultJsonString = duk_require_string(ctx, 1);    
     void* p1 = duk_require_pointer(ctx, 2);
     void* p2 = duk_require_pointer(ctx, 3);
     void(*callback)(const char* error, const char* json, void*) = 

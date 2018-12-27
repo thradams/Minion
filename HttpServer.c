@@ -8,6 +8,7 @@
 #include "Board.h"
 #include "AppBuild.h"
 #include <string.h>
+#include <ctype.h>
 
 int CaseInsensitiveCompare(char const *a, char const *b)
 {
@@ -44,7 +45,7 @@ bool ReadUntil(struct HttpConnection* pCon,
             {
                 if (i < (int)destLen - 1)
                 {
-                    *dest = tolower(local);
+                    *dest = local; // tolower(local);
                     dest++;
                     i++;
                 }
@@ -105,13 +106,13 @@ bool ReadLine(struct HttpConnection* pCon,
                 }
                 if (ch != ' ')
                 {
-                    *p = tolower(ch);
+                  *p = ch;// tolower(ch);
                     p++;
                 }
             }
             else
             {
-                *p = tolower(ch);
+              *p = ch;// tolower(ch);
                 p++;
             }
         }
@@ -145,11 +146,11 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
         char bufferRight[200];
         //Method SP
         ReadUntil(pCon, ' ', bufferLeft, sizeof(bufferLeft), &error);
-        if (strcmp(bufferLeft, "get") == 0)
+        if (CaseInsensitiveCompare(bufferLeft, "get") == 0)
         {
             pCon->Method = HTTP_METHOD_GET;
         }
-        else if (strcmp(bufferLeft, "post") == 0)
+        else if (CaseInsensitiveCompare(bufferLeft, "post") == 0)
         {
             pCon->Method = HTTP_METHOD_POST;
         }
@@ -172,7 +173,7 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
                 break;
             }
 
-            if (strcmp(bufferLeft, "connection") == 0)
+            if (CaseInsensitiveCompare(bufferLeft, "connection") == 0)
             {
                 //https://tools.ietf.org/html/rfc7230#section-6.1
                 if (strcmp(bufferRight, "keep-alive") == 0)
@@ -184,7 +185,7 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
                     pCon->bKeepAlive = false;
                 }
             }
-            else if (strcmp(bufferLeft, "content-length") == 0)
+            else if (CaseInsensitiveCompare(bufferLeft, "content-length") == 0)
             {
                 pCon->ContentLength = atoi(bufferRight);
             }

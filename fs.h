@@ -16,6 +16,11 @@ bool fs_remove(const char* path, struct error_code* ec);
 
 bool fs_current_path(char* pathOut);
 
+void fs_path_split(const char* Path,
+  char* Drive,
+  char* Directory,
+  char* Filename,
+  char* Extension);
 
 struct directory_iterator
 {
