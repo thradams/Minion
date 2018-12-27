@@ -27,6 +27,7 @@ char ROOT_PATH[100] = { 0 };
 char SOURCE_PATH[100] = { 0 };
 
 
+///sudo service ssh start
 
 void RunApp(const char* rootPath, const char* appName)
 {
@@ -168,7 +169,7 @@ int main(int argc, char *argv[])
 #else
       //home/tra/projects/MinionLinux/bin/x64/Debug/
       const char* appName = argv[2];
-      RunApp("..\..\..", appName);
+      RunApp("../../../", appName);
 #endif
         
       
