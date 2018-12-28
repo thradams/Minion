@@ -29,7 +29,7 @@ char SOURCE_PATH[100] = { 0 };
 
 ///sudo service ssh start
 
-void RunApp(const char* rootPath, const char* appName)
+bool RunApp(const char* rootPath, const char* appName, struct Error* error)
 {
     //rootPath is the path were we can find the sources
     //that are unchanged like runtime.js
@@ -42,76 +42,80 @@ void RunApp(const char* rootPath, const char* appName)
 
     struct MinionServer minionServer;
 
-    struct Error error = ERROR_INIT;
+    
 
-    if (MinionServer_Init(&minionServer, appName, rootPath, &error))
+    if (MinionServer_Init(&minionServer, appName, rootPath, error))
     {
 
-    }
-
-
-    s_screen_0_dirty = 1;
-    int screen_number = 0;
-    for (;;)
-    {
-        UIActorProcess();
-
-
-        switch (screen_number)
+        s_screen_0_dirty = 1;
+        int screen_number = 0;
+        for (;;)
         {
-        case 0:
-            if (s_screen_0_dirty)
+            UIActorProcess();
+
+
+            switch (screen_number)
             {
-                c_clrscr();
-                printf("http server running " PORT_NUMBER " - press ESC to exit\n");
-                printf("directory : %s\n", rootDirectory);
-                printf("\n");
-                printf("Edit: http://localhost:8080/edit/edit.html?name=tela1 \n");
-                printf("Runtime: http://localhost:8080/html/index.html \n");
-                printf("press b to build all\n");
+            case 0:
+                if (s_screen_0_dirty)
+                {
+                    c_clrscr();
+                    printf("http server running " PORT_NUMBER " - press ESC to exit\n");
+                    printf("directory : %s\n", rootDirectory);
+                    printf("\n");
+                    printf("Edit: http://localhost:8080/edit/edit.html?name=tela1 \n");
+                    printf("Runtime: http://localhost:8080/html/index.html \n");
+                    printf("press b to build all\n");
 
 
-                s_screen_0_dirty = false;
-            }
-            //s_screen_1_dirty = 0;
-            break;
-        case 1:
-            if (s_screen_1_dirty)
-            {
-                c_clrscr();
-                Board_Paint();
-                s_screen_1_dirty = false;
-            }
-            break;
-        }
-
-
-        if (c_kbhit())
-        {
-            int k = c_getch();
-            if (k == 'v')
-            {
-                screen_number = screen_number == 1 ? 0 : 1;
-                s_screen_0_dirty = true;
-                s_screen_1_dirty = true;
-            }
-            else if (k == 'b')
-            {
-                //printf("building..\n");
-                //BuildApp(SOURCE_PATH, ROOT_PATH);
-                //printf("complete\n");
-            }
-
-            if (k == 27)
+                    s_screen_0_dirty = false;
+                }
+                //s_screen_1_dirty = 0;
                 break;
+            case 1:
+                if (s_screen_1_dirty)
+                {
+                    c_clrscr();
+                    Board_Paint();
+                    s_screen_1_dirty = false;
+                }
+                break;
+            }
 
-        }
+
+            if (c_kbhit())
+            {
+                int k = c_getch();
+                if (k == 'v')
+                {
+                    screen_number = screen_number == 1 ? 0 : 1;
+                    s_screen_0_dirty = true;
+                    s_screen_1_dirty = true;
+                }
+                else if (k == 'b')
+                {
+                    //printf("building..\n");
+                    //BuildApp(SOURCE_PATH, ROOT_PATH);
+                    //printf("complete\n");
+                }
+
+                if (k == 27)
+                    break;
+
+            }
 #ifdef _WIN32
-        Sleep(500);
+            Sleep(500);
 #else
 #endif
 
+        }
+
     }
+    else
+    {
+
+    }
+
 
     ThreadPool_Stop(NULL);
     ThreadPool_Join(NULL);
@@ -122,6 +126,7 @@ void RunApp(const char* rootPath, const char* appName)
 
 
     MinionServer_Destroy(&minionServer);
+    return Error_IsEmpty(error);
 }
 
 
@@ -147,32 +152,40 @@ int main(int argc, char *argv[])
     }
     else if (argc == 3 && (strcmp(argv[1], "run") == 0))
     {
-
-      char Drive[256];
+        struct Error error = ERROR_INIT;
+        char Drive[256];
         char Directory[256];
         char Filename[256];
         char Extension[256];
 
-      fs_path_split(argv[0],
-        Drive,
-        Directory,
-        Filename,
-        Extension);
-        
-      char currentPath[256] = { 0 };
-      fs_current_path(currentPath);
-      printf("Current Path:%s\n", currentPath);
-        
+        fs_path_split(argv[0],
+            Drive,
+            Directory,
+            Filename,
+            Extension);
+
+        char currentPath[256] = { 0 };
+        fs_current_path(currentPath);
+        printf("Current Path:%s\n", currentPath);
+
 #ifdef _WIN32
-      const char* appName = argv[2];
-      RunApp("./", appName);
+        const char* appName = argv[2];
+        if (!RunApp("./", appName, &error))
+        {
+            
+                printf("Error : %s", error.Msg);
+            
+        }
 #else
-      //home/tra/projects/MinionLinux/bin/x64/Debug/
-      const char* appName = argv[2];
-      RunApp("../../../", appName);
+        //home/tra/projects/MinionLinux/bin/x64/Debug/
+        const char* appName = argv[2];
+        if (!RunApp("../../../", appName, &error))
+        {
+            printf("Error : %s", error.Msg);
+        }
 #endif
-        
-      
+
+
     }
     else
     {

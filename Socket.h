@@ -5,6 +5,7 @@
 #include <stdlib.h>   // Needed for _wtoi
 #include <stddef.h>
 
+#include "Error.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -33,18 +34,18 @@ typedef int Socket;
 
 void Socket_Close(Socket socket);
 Socket Socket_Create(int af,
-    int type,
-    int protocol
-);
+                     int type,
+                     int protocol,
+                     struct Error* error);
 
-int Socket_Bind(Socket socket,
+bool Socket_Bind(Socket socket,
     const struct sockaddr * name,
     int namelen
-);
+    , struct Error* error);
 
-int Socket_Listen(Socket socket, int backlog);
+bool Socket_Listen(Socket socket, int backlog, struct Error* error);
 
-Socket Socket_Accept(Socket socket, struct sockaddr * addr, int *addrlen);
+Socket Socket_Accept(Socket socket, struct sockaddr * addr, int *addrlen, struct Error* error);
 
 
 bool Socket_IsReadyToReceive(Socket sock, int intervalMs);
@@ -54,17 +55,17 @@ void Socket_CloseGracefully(Socket socket);
 int SetNonBlockingMode(Socket sock);
 
 const char* GetSocketErrorA(int error);
-const wchar_t* GetSocketErrorW(int error);
-
-int Socket_Recv(Socket socket, void *buf, size_t n, int flags);
 
 
-int Socket_SetTimeout(Socket sock, int milliseconds);
+int Socket_Recv(Socket socket, void *buf, size_t n, int flags, struct Error* error);
+
+
+int Socket_SetTimeout(Socket sock, int milliseconds, struct Error* error);
 
 
 size_t Socket_PushBytes(Socket socket,
     const char* bytes,
-    size_t len);
+    size_t len, struct Error* error);
 
 
 void SocketStaticInit();

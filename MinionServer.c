@@ -387,7 +387,7 @@ bool MinionServer_Init(struct MinionServer* server,
     else
     {
     }
-    return true;
+    return Error_IsEmpty(error);
 }
 
 void MinionServer_Destroy(struct MinionServer* server)

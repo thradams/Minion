@@ -266,7 +266,7 @@ bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct 
   else
   {
      
-    result = Socket_Recv(connection->Socket, ch, 1, 0);
+    result = Socket_Recv(connection->Socket, ch, 1, 0, error);
     if (result > 0)
     {
       //ok
@@ -312,7 +312,7 @@ int HttpConnection_PushBytes(struct HttpConnection* connection, const char* byte
   }
   else
   {
-    r = Socket_PushBytes(connection->Socket, bytes, len);
+    r = Socket_PushBytes(connection->Socket, bytes, len, error);
   }
   return r;
 }
@@ -424,6 +424,7 @@ bool HttpConnection_SendJson(struct HttpConnection* connection, const char* json
     
     HttpConnection_PushBytes(connection, buffer, number_characters_written, error);
     HttpConnection_PushBytes(connection, jsonString, strlen(jsonString), error);
+    return true;
 }
 bool HttpConnection_SendOK(struct HttpConnection* connection, struct Error* error)
 {  

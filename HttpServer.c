@@ -106,13 +106,13 @@ bool ReadLine(struct HttpConnection* pCon,
                 }
                 if (ch != ' ')
                 {
-                  *p = ch;// tolower(ch);
+                    *p = ch;// tolower(ch);
                     p++;
                 }
             }
             else
             {
-              *p = ch;// tolower(ch);
+                *p = ch;// tolower(ch);
                 p++;
             }
         }
@@ -212,29 +212,30 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
 }
 
 void HttpServer_ConnectionSink(struct HttpConnection* pCon)
-{  
+{
     /*
     Reciclagem da conexao
     */
     if (pCon->bKeepAlive)
     {
-      //Reseta o header e reaproveita a conexão
-      pCon->bKeepAlive = false;
-      pCon->uri[0] = 0;
-      pCon->Method = HTTP_METHOD_NONE;
-
-      Socket_SetTimeout(pCon->Socket, 3000);
-      ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));
+        //Reseta o header e reaproveita a conexão
+        pCon->bKeepAlive = false;
+        pCon->uri[0] = 0;
+        pCon->Method = HTTP_METHOD_NONE;
+        struct Error error = ERROR_INIT;
+        Socket_SetTimeout(pCon->Socket, 3000, &error);
+        ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));
     }
     else
     {
-      //ok pode fechar
-      HttpConnection_Delete(pCon);
+        //ok pode fechar
+        HttpConnection_Delete(pCon);
     }
 }
 
 static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
 {
+    struct Error error = ERROR_INIT;
     if (action == TASK_RUN)
     {
         struct HttpServer* pHttpServer = (*(struct HttpServer**) pData);
@@ -246,7 +247,7 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
 #endif
             if (Socket_IsReadyToReceive(pHttpServer->listenSocket, 10000))
             {
-                Socket socket = Socket_Accept(pHttpServer->listenSocket, NULL, NULL);
+                Socket socket = Socket_Accept(pHttpServer->listenSocket, NULL, NULL, &error);
                 if (socket == INVALID_SOCKET)
                 {
                     //socketerror = WSAGetLastError();
@@ -261,13 +262,13 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
                         (const char*)&on,
                         sizeof(on));
 
-                    Socket_SetTimeout(socket, 3000);
+                    Socket_SetTimeout(socket, 3000, &error);
                     struct Error error = ERROR_INIT;
                     struct HttpConnection* pCon = HttpConnection_Create(socket, pHttpServer->m_ctx, &error);
                     if (pCon)
                     {
-                      pCon->pHttpServer = pHttpServer;//vive mais que conexao
-                      ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));//SINK
+                        pCon->pHttpServer = pHttpServer;//vive mais que conexao
+                        ThreadPool_Push(NULL, HandleConnection, &pCon, sizeof(pCon));//SINK
                     }
                 }
             }
@@ -316,15 +317,15 @@ static void SetSecurity(SSL_CTX *ctx, enum SECURITY securityVersion)
 }
 
 bool HttpServer_Init(struct HttpServer* httpServer,
-  enum SECURITY securityVersion,
-  HandleFunction handleFunction,
+    enum SECURITY securityVersion,
+    HandleFunction handleFunction,
     const char* port,
     const char* strsslCertificate,
     const char* strsslPrivateKey,
     struct Error* error)
 {
     httpServer->HandleFunction = handleFunction;
-    
+
     httpServer->m_ctx = NULL;
 
     if (securityVersion != SECURITY_VERSION_NONE)
@@ -388,38 +389,20 @@ bool HttpServer_Init(struct HttpServer* httpServer,
 
     httpServer->listenSocket = Socket_Create(ai->ai_family,
         ai->ai_socktype,
-        ai->ai_protocol);
+        ai->ai_protocol, error);
 
-    if (!httpServer->listenSocket)
+    if (httpServer->listenSocket != 0)
     {
-        //erro
+        if (Socket_Bind(httpServer->listenSocket, ai->ai_addr, ai->ai_addrlen, error))
+        {
+            if (Socket_Listen(httpServer->listenSocket, SOMAXCONN, error))
+            {
+
+            }
+            ThreadPool_Push(NULL, HttpServer_Loop, &httpServer, sizeof(void*));
+        }
     }
 
-    int i = Socket_Bind(httpServer->listenSocket, ai->ai_addr, ai->ai_addrlen);
-    if (i == SOCKET_ERROR)
-    {
-        //socketerror = WSAGetLastError();
-    }
-    //int socketerror = 0;
-    iRes = Socket_Listen(httpServer->listenSocket, SOMAXCONN);
-    if (iRes == SOCKET_ERROR)
-    {
-        //  If the listen function is called on an already listening socket,
-        //  it will return success without changing the value for the
-        //  backlog parameter. Setting the backlog parameter to 0 in a
-        //  subsequent call to listen on a listening socket is not
-        //  considered a proper reset, especially if there are
-        //  connections on the socket.
 
-        //ASSERT(false);
-        //std::wstring strError = GetSocketErrorW(socketerror);
-        //SendHttpServerError(strError);
-        //return;
-    }
-
-    ThreadPool_Push(NULL, HttpServer_Loop, &httpServer, sizeof(void*));
-    //HttpServer_Loop
-
-    return true;
-
+    return Error_IsEmpty(error);
 }
