@@ -10,6 +10,12 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+#else
+#include <pthread.h>
+#define GetCurrentThreadId pthread_self
+#endif
+
 int CaseInsensitiveCompare(char const *a, char const *b)
 {
     for (;; a++, b++)

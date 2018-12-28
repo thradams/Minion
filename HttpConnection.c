@@ -9,7 +9,11 @@
 #include <string.h>
 #include <time.h>
 
-
+#ifdef _WIN32
+#else
+#include <pthread.h>
+#define GetCurrentThreadId pthread_self
+#endif
 
 #ifdef _WIN32
 #define gmtime_r gmtime_s

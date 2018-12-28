@@ -8,6 +8,12 @@
 
 #ifdef _WIN32
 #else
+#include <pthread.h>
+#define GetCurrentThreadId pthread_self
+#endif
+
+#ifdef _WIN32
+#else
 
 char * _itoa( int value, char *buffer, int radix )
 {

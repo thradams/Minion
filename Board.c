@@ -52,7 +52,7 @@ void AddPost(const wchar_t * fmt, ...)
 
     wchar_t *psz = (wchar_t *)malloc(sizeof(wchar_t) * 500);
     //wchar_t buffer[500];
-    _vsnwprintf_s(psz, 500, _TRUNCATE, fmt, args);
+    snprintf(psz, 500, fmt, args);
     va_end(args);
 
     UIActor_Post(GuiAddPost, &psz, sizeof(void*));

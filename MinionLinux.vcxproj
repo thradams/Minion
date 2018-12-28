@@ -131,8 +131,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>
-      </PreprocessorDefinitions>
+      <PreprocessorDefinitions>CONSOLE_CONIO;UIACTOR;BOARD;</PreprocessorDefinitions>
       <AdditionalOptions>-D_XOPEN_SOURCE=700 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -143,7 +142,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CONSOLE_CONIO;UIACTOR;BOARD;</PreprocessorDefinitions>
       <AdditionalOptions>-D_XOPEN_SOURCE=700 -lpthread %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>

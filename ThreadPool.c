@@ -5,6 +5,12 @@
 #include "Board.h"
 #endif
 
+#ifdef _WIN32
+#else
+#include <pthread.h>
+#define GetCurrentThreadId pthread_self
+#endif
+
 struct ThreadPool MainThreadPool;
 
 int Thread_N_Loop(void* pData)

@@ -16,6 +16,18 @@
 #include "MinionServer.h"
 #include "fs.h"
 
+#ifdef _WIN32
+#else
+#include <unistd.h>
+
+void Sleep(int t)
+{
+    if (t < 1000)
+        t = 1000;
+
+    sleep(t / 1000);
+}
+#endif
 
 int s_screen_1_dirty = 0;
 int s_screen_0_dirty = 0;
@@ -103,10 +115,8 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
                     break;
 
             }
-#ifdef _WIN32
+
             Sleep(500);
-#else
-#endif
 
         }
 
