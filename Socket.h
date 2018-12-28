@@ -30,9 +30,6 @@ typedef int Socket;
 
 #endif
 
-void SocketInit();
-
-
 
 void Socket_Close(Socket socket);
 Socket Socket_Create(int af,
@@ -69,8 +66,6 @@ size_t Socket_PushBytes(Socket socket,
     const char* bytes,
     size_t len);
 
-
-int SetSockTimeout(Socket sock, int milliseconds);
 
 void SocketStaticInit();
 void SocketStaticDestroy();

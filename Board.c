@@ -79,8 +79,8 @@ void Node_PrintS(struct Node* p, int* y, int* n)
   if (p->Key)
   {
 #ifdef CONSOLE_CONIO
-    textcolor(CYAN);
-    gotoxy(1 + *n * 1, *y);
+    c_textcolor(CYAN);
+    c_gotoxy(1 + *n * 1, *y);
 #endif
     //TextOut(hdc, 10 + *n * 20, *y, p->Key, wcslen(p->Key));
     printf("%ls", (const wchar_t*)p->Key);
@@ -89,8 +89,8 @@ void Node_PrintS(struct Node* p, int* y, int* n)
   if (p->Text)
   {
 #ifdef CONSOLE_CONIO
-    textcolor(WHITE);
-    gotoxy(20 + *n * 1, *y);
+      c_textcolor(WHITE);
+      c_gotoxy(20 + *n * 1, *y);
 #endif
     //TextOut(hdc, 200 + *n * 20, *y, p->Text, wcslen(p->Text));
     //TextOut(hdc, 10 + *n * 5, y, p->Key, 0);
@@ -110,7 +110,7 @@ void Node_PrintS(struct Node* p, int* y, int* n)
 void Board_Paint()
 {
 #ifdef CONSOLE_CONIO
-  _setcursortype(_NOCURSOR);
+  c_setcursortype(_NOCURSOR);
 #endif
   if (Board.pRoot)
   {
@@ -121,11 +121,11 @@ void Board_Paint()
       Node_PrintS(Board.pRoot->pChildNodes[i], &y, &n);
     }
 #ifdef CONSOLE_CONIO
-    gotoxy(1, y);
+    c_gotoxy(1, y);
 #endif
   }
 #ifdef CONSOLE_CONIO
-  _setcursortype(_SOLIDCURSOR);
+  c_setcursortype(_SOLIDCURSOR);
 #endif
 
 }

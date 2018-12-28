@@ -62,7 +62,7 @@ void RunApp(const char* rootPath, const char* appName)
         case 0:
             if (s_screen_0_dirty)
             {
-                clrscr();
+                c_clrscr();
                 printf("http server running " PORT_NUMBER " - press ESC to exit\n");
                 printf("directory : %s\n", rootDirectory);
                 printf("\n");
@@ -78,7 +78,7 @@ void RunApp(const char* rootPath, const char* appName)
         case 1:
             if (s_screen_1_dirty)
             {
-                clrscr();
+                c_clrscr();
                 Board_Paint();
                 s_screen_1_dirty = false;
             }
@@ -86,9 +86,9 @@ void RunApp(const char* rootPath, const char* appName)
         }
 
 
-        if (kbhit())
+        if (c_kbhit())
         {
-            int k = getch();
+            int k = c_getch();
             if (k == 'v')
             {
                 screen_number = screen_number == 1 ? 0 : 1;
