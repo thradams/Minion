@@ -8,6 +8,7 @@
 
 void TaskQueue_Init(struct TaskQueue *pTaskQueue, int queueCapacity)
 {
+    assert(queueCapacity > 0);
     pTaskQueue->pTasks = NULL;
     pTaskQueue->Capacity = queueCapacity;
     pTaskQueue->Count = 0;

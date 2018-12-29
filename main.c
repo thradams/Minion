@@ -92,7 +92,7 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
 
                     clock_t  t2;
                     t2 = clock();
-                    if (( (t2 - t)) > CLOCKS_PER_SEC/2)
+                    if (( (t2 - t)) > CLOCKS_PER_SEC/5)
                     {
                         t = t2;
                         c_clrscr();
@@ -125,9 +125,6 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
                     break;
 
             }
-
-            //Sleep(500);
-
         }
 
     }

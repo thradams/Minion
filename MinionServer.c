@@ -277,6 +277,7 @@ void RunScript(enum TASK_ACTION action, void* pData)
 
 void MinionServerConnectionHandler(struct HttpConnection* pCon)
 {
+    Print("%s %d\n", pCon->uri, pCon->ContentLength);
     struct MinionServer* pMinionServer = container_of(pCon->pHttpServer, struct MinionServer, HttpServer);
 
     struct Error error = ERROR_INIT;

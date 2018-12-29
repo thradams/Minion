@@ -34,7 +34,7 @@ void UIActor_Destroy()
 void UIActorProcess()
 {
     struct TaskQueue queue;
-    TaskQueue_Init(&queue, 0);
+    TaskQueue_Init(&queue, 100);
 
     mtx_lock(&UIActor.Mutex);
     TaskQueue_Swap(&queue, &UIActor.TaskQueue);
