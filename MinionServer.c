@@ -288,7 +288,7 @@ void MinionServerConnectionHandler(struct HttpConnection* pCon)
     else if (pCon->Method == HTTP_METHOD_GET)
     {
 #ifdef BOARD
-        AddPost(L"Thread/%d send file %s", (int)GetCurrentThreadId(), pCon->uri);
+        AddPost("Thread/%p send file %s", (void*)GetCurrentThreadId(), pCon->uri);
 #endif
         if (strcmp(pCon->uri, "/html/index.html") == 0)
         {

@@ -14,7 +14,12 @@ typedef void(*TaskFunction)(enum TASK_ACTION action, void* pData);
 struct Task
 {
   TaskFunction pTaskFunction;
-  void* pCapture[4];
+  union
+  {
+      void* pCapture[4];
+      char* psz;
+  };
+  
 };
 
 

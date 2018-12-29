@@ -140,7 +140,7 @@ static void HandleConnection(enum TASK_ACTION action, void* pData);
 static void HandleConnection(enum TASK_ACTION action, void* pData)
 {
 #ifdef BOARD
-    AddPost(L"Thread/%d HandleConnection", (int)GetCurrentThreadId());
+    AddPost("Thread/%p HandleConnection", (void*)GetCurrentThreadId());
 #endif
     struct HttpConnection* pCon = *((struct HttpConnection**) pData);
     if (pCon)
@@ -249,7 +249,7 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
         //for (;;)
         {
 #ifdef BOARD
-            AddPost(L"Thread/%d Socket_IsReadyToReceive", (int)GetCurrentThreadId());
+            AddPost("Thread/%p Socket_IsReadyToReceive", (void*)GetCurrentThreadId());
 #endif
             if (Socket_IsReadyToReceive(pHttpServer->listenSocket, 10000))
             {
@@ -280,7 +280,7 @@ static void HttpServer_Loop(enum TASK_ACTION action, void* pData)
             }
         }
 #ifdef BOARD
-        AddPost(L"Thread/%d Sleep(10)", (int)GetCurrentThreadId());
+        AddPost("Thread/%p Sleep(10)", (void*)GetCurrentThreadId());
 #endif
         //Sleep(10);
         //Socket_Close(listenSocket);

@@ -15,6 +15,7 @@
 #include "duktape.h"
 #include "MinionServer.h"
 #include "fs.h"
+#include <time.h>
 
 #ifdef _WIN32
 #else
@@ -22,10 +23,7 @@
 
 void Sleep(int t)
 {
-    if (t < 1000)
-        t = 1000;
-
-    sleep(t / 1000);
+    usleep(t);
 }
 #endif
 
@@ -54,13 +52,17 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
 
     struct MinionServer minionServer;
 
-    
+
 
     if (MinionServer_Init(&minionServer, appName, rootPath, error))
     {
+        clock_t  t;
+        t = clock();
 
         s_screen_0_dirty = 1;
+        s_screen_1_dirty = 1;
         int screen_number = 0;
+
         for (;;)
         {
             UIActorProcess();
@@ -87,9 +89,17 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
             case 1:
                 if (s_screen_1_dirty)
                 {
-                    c_clrscr();
-                    Board_Paint();
-                    s_screen_1_dirty = false;
+
+                    clock_t  t2;
+                    t2 = clock();
+                    if (( (t2 - t)) > CLOCKS_PER_SEC/2)
+                    {
+                        t = t2;
+                        c_clrscr();
+                        Board_Paint();
+                        s_screen_1_dirty = false;
+                    }
+
                 }
                 break;
             }
@@ -116,7 +126,7 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
 
             }
 
-            Sleep(500);
+            //Sleep(500);
 
         }
 
@@ -142,6 +152,7 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
 
 int main(int argc, char *argv[])
 {
+
     printf("Minions Castle\n");
 
     if (argc < 2)
@@ -182,9 +193,9 @@ int main(int argc, char *argv[])
         const char* appName = argv[2];
         if (!RunApp("./", appName, &error))
         {
-            
-                printf("Error : %s", error.Msg);
-            
+
+            printf("Error : %s", error.Msg);
+
         }
 #else
         //home/tra/projects/MinionLinux/bin/x64/Debug/

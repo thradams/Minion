@@ -4,8 +4,8 @@
 
 struct Node
 {
-    const wchar_t*  Key;
-    const wchar_t*  Text;
+    const char*  Key;
+    const char*  Text;
     struct Node** pChildNodes;
     int Size;
     int Capacity;
@@ -20,7 +20,7 @@ struct Board
 
 void Board_Init(struct Board* p);
 void Board_Destroy(struct Board* p);
-void Board_Add(struct Board * p, const wchar_t * key);
+void Board_Add(struct Board * p, const char * key);
 void Board_Print(struct Board * p);
 
 void Node_Sort(struct Node* p);

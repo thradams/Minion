@@ -20,7 +20,7 @@ int Thread_N_Loop(void* pData)
   for (;;)
   {
 #ifdef BOARD
-    AddPost(L"Thread/%d Waiting", (int)GetCurrentThreadId());
+    AddPost("Thread/%p Waiting", (void*)GetCurrentThreadId());
 #endif
     mtx_lock(&pTaskQueue->Mutex);
 
@@ -54,13 +54,13 @@ int Thread_N_Loop(void* pData)
         copy = *p;
       }
 #ifdef BOARD
-      AddPost(L"Thread %d/%d", pTaskQueue->TaskQueue.Count, pTaskQueue->TaskQueue.Capacity);
+      AddPost("Thread %d/%d", pTaskQueue->TaskQueue.Count, pTaskQueue->TaskQueue.Capacity);
 #endif
       mtx_unlock(&pTaskQueue->Mutex);
       if (p)
       {
 #ifdef BOARD
-        AddPost(L"Thread/%d Working", (int)GetCurrentThreadId());
+        AddPost("Thread/%p Working", (void*)GetCurrentThreadId());
 #endif
         (copy.pTaskFunction)(TASK_RUN, copy.pCapture);
       }
@@ -129,7 +129,7 @@ int ThreadPool_Push(struct ThreadPool * pThreadPool,
   {
     TaskQueue_Push(&pThreadPool->TaskQueue, pTaskFunction, pCapture, (int)captureSizeBytes);
 #ifdef BOARD
-    AddPost(L"Thread %d/%d", pThreadPool->TaskQueue.Count, pThreadPool->TaskQueue.Capacity);
+    AddPost("Thread %d/%d", pThreadPool->TaskQueue.Count, pThreadPool->TaskQueue.Capacity);
 #endif
     mtx_unlock(&pThreadPool->Mutex);
 

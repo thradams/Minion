@@ -2,5 +2,5 @@
 #include <stddef.h>
 
 
-void AddPost(const wchar_t * fmt, ...);
+void AddPost(const char * fmt, ...);
 void Board_Paint();

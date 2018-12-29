@@ -36,7 +36,7 @@ void X_Init(struct X* p)
 
 void X_Write(struct X* p, const char* tag, double value)
 {
-  AddPost(L"Thread/%d Working X_Write", (int)GetCurrentThreadId());
+  AddPost("Thread/%d Working X_Write", (int)GetCurrentThreadId());
   p->i++;
   Sleep(500);
 }

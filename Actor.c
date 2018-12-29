@@ -10,9 +10,9 @@ int Actor_Init(struct Actor* pActor, int queueCapacity)
     pActor->state = ACTOR_STATE_NONE;
     int r = mtx_init(&pActor->Mutex, mtx_plain);
 #ifdef BOARD  
-    AddPost(L"Actor/%p/State NONE", (void*)pActor);
-    AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)pActor, pActor->TaskQueue.Count, pActor->TaskQueue.Capacity, pActor->TaskQueue.pTasks == NULL ? L"null" : L"");
-    AddPost(L"Actor/%p/Active -", (void*)pActor);
+    AddPost("Actor/%p/State NONE", (void*)pActor);
+    AddPost("Actor/%p/Tasks %d/%d %s", (void*)pActor, pActor->TaskQueue.Count, pActor->TaskQueue.Capacity, pActor->TaskQueue.pTasks == NULL ? L"null" : L"");
+    AddPost("Actor/%p/Active -", (void*)pActor);
 #endif
     return r;
 }
@@ -38,8 +38,8 @@ void ActorProcess(enum TASK_ACTION state, void* pdata)
             //sair do loop
             TaskQueue_Swap(&queue, &actor->TaskQueue);
 #ifdef BOARD
-            AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
-            AddPost(L"Actor/%p/State NONE", (void*)actor);
+            AddPost("Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
+            AddPost("Actor/%p/State NONE", (void*)actor);
 #endif
             actor->state = ACTOR_STATE_NONE;
             mtx_unlock(&actor->Mutex);
@@ -48,13 +48,13 @@ void ActorProcess(enum TASK_ACTION state, void* pdata)
 
         actor->state = ACTOR_STATE_RUNNING;
 #ifdef BOARD
-        AddPost(L"Actor/%p/State RUNNING", (void*)actor);
+        AddPost("Actor/%p/State RUNNING", (void*)actor);
 #endif
 
         TaskQueue_Swap(&queue, &actor->TaskQueue);
 
 #ifdef BOARD
-        AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
+        AddPost("Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
 #endif
         mtx_unlock(&actor->Mutex);
 
@@ -63,19 +63,19 @@ void ActorProcess(enum TASK_ACTION state, void* pdata)
         //Roda todas as tasks deste actor
         struct Task* pTask = TaskQueue_Pop(&queue);
 #ifdef BOARD
-        AddPost(L"Actor/%p/Active %d/%d", (void*)actor, queue.Count, queue.Capacity);
+        AddPost("Actor/%p/Active %d/%d", (void*)actor, queue.Count, queue.Capacity);
 #endif
         while (pTask)
         {
             pTask->pTaskFunction(TASK_RUN, pTask->pCapture);
             pTask = TaskQueue_Pop(&queue);
 #ifdef BOARD
-            AddPost(L"Actor/%p/Active %d/%d", (void*)actor, queue.Count, queue.Capacity);
+            AddPost("Actor/%p/Active %d/%d", (void*)actor, queue.Count, queue.Capacity);
 #endif
         }
 
 #ifdef BOARD
-        AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
+        AddPost("Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
 #endif
         //Reset (reciclagem)
         queue.Count = 0;
@@ -83,7 +83,7 @@ void ActorProcess(enum TASK_ACTION state, void* pdata)
         queue.pTail = queue.pTasks;
     }
 #ifdef BOARD
-    AddPost(L"Actor/%p/Active -", (void*)actor);
+    AddPost("Actor/%p/Active -", (void*)actor);
 #endif
     TaskQueue_Destroy(&queue);
 }
@@ -99,14 +99,14 @@ void Actor_Post(struct Actor* actor,
 
     TaskQueue_Push(&actor->TaskQueue, taskFunction, pCapture, (int)captureSizeBytes);
 #ifdef BOARD
-    AddPost(L"Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
+    AddPost("Actor/%p/Tasks %d/%d %s", (void*)actor, actor->TaskQueue.Count, actor->TaskQueue.Capacity, actor->TaskQueue.pTasks == NULL ? L"null" : L"");
 #endif
 
     switch (actor->state)
     {
     case ACTOR_STATE_NONE:
 #ifdef BOARD
-        AddPost(L"Actor/%p/State ONQUEUE", (void*)actor);
+        AddPost("Actor/%p/State ONQUEUE", (void*)actor);
 #endif
         actor->state = ACTOR_STATE_ONQUEUE;
         ThreadPool_Push(&MainThreadPool, ActorProcess, &actor, sizeof(void*));

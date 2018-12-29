@@ -454,7 +454,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
 {
 
 #ifdef BOARD
-  AddPost(L"Thread/%d HttpConnection_SendFile", (int)GetCurrentThreadId());
+  AddPost("Thread/%p HttpConnection_SendFile", (void*)GetCurrentThreadId());
 #endif
 
   if (!Error_IsEmpty(error))

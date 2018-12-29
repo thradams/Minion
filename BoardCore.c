@@ -5,8 +5,9 @@
 #include <wchar.h>
 
 #ifdef _WIN32
+#define strdup _strdup 
 #else
-#define _wcsdup wcsdup
+#define _strdup strdup
 #endif
 
 struct Node* Node_Create()
@@ -36,7 +37,7 @@ void Node_Delete(struct Node* p)
 
 //Retorna o indice do array aonde se encontra a Key searchItem
 int BinarySearch(struct Node *pNode,
-    const wchar_t* searchItem,
+    const char* searchItem,
     int searchItemLen)
 {
     int mid;
@@ -48,7 +49,7 @@ int BinarySearch(struct Node *pNode,
     {
         mid = (l + u) / 2;
 
-        int cmp = wcsncmp(searchItem, pNode->pChildNodes[mid]->Key, searchItemLen);
+        int cmp = strncmp(searchItem, pNode->pChildNodes[mid]->Key, searchItemLen);
 
         if (cmp == 0)
         {
@@ -86,12 +87,12 @@ void QuickSort(struct Node *pNode,
         {
 
             while (i < last_index &&
-                   wcscmp(pNode->pChildNodes[i]->Key, pNode->pChildNodes[pivot]->Key) <= 0)
+                   strcmp(pNode->pChildNodes[i]->Key, pNode->pChildNodes[pivot]->Key) <= 0)
             {
                 i++;
             }
 
-            while (wcscmp(pNode->pChildNodes[j]->Key, pNode->pChildNodes[pivot]->Key) > 0)
+            while (strcmp(pNode->pChildNodes[j]->Key, pNode->pChildNodes[pivot]->Key) > 0)
             {
                 j--;
             }
@@ -175,7 +176,7 @@ void Node_Sort(struct Node* p)
     }
 }
 
-int Node_Find(struct Node* p, const wchar_t* key, int keylen)
+int Node_Find(struct Node* p, const char* key, int keylen)
 {
     if (p == NULL)
         return -1;
@@ -184,7 +185,7 @@ int Node_Find(struct Node* p, const wchar_t* key, int keylen)
     return  BinarySearch(p, key, keylen);
 }
 
-void Node_RemoveKey(struct Node* p, const wchar_t* key)
+void Node_RemoveKey(struct Node* p, const char* key)
 {
     if (key != NULL)
     {
@@ -205,20 +206,20 @@ void Node_AddNode(struct Node* p, struct  Node *pNewNode)
     p->SortedFlag = (p->Size == 1);
 }
 
-void Node_Add(struct Node* p, const wchar_t* key, const wchar_t* text)
+void Node_Add(struct Node* p, const char* key, const char* text)
 {
     struct Node* pNewNode = Node_Create();
 #ifdef _WIN32
-    pNewNode->Key = _wcsdup(key);
-    pNewNode->Text = _wcsdup(text);
+    pNewNode->Key = _strdup(key);
+    pNewNode->Text = _strdup(text);
 #else
-    pNewNode->Key = wcsdup(key);
-    pNewNode->Text = wcsdup(text);
+    pNewNode->Key = strdup(key);
+    pNewNode->Text = strdup(text);
 #endif
     Node_AddNode(p, pNewNode);
 }
 
-void Board_Remove(struct Board * p, const wchar_t * key)
+void Board_Remove(struct Board * p, const char * key)
 {
     if (key == NULL)
     {
@@ -228,13 +229,13 @@ void Board_Remove(struct Board * p, const wchar_t * key)
     struct Node* pCurrent = p->pRoot;
     struct Node* pParent = NULL;
     int childIndex = -1;
-    const wchar_t *tail = key;
-    const wchar_t *front = key;
+    const char *tail = key;
+    const char *front = key;
     while (*tail)
     {
         if (*tail == '/' || *(tail + 1) == 0)
         {
-            const wchar_t* key2 = front;
+            const char* key2 = front;
             int key2size;
             if (*(tail + 1) == 0)
             {
@@ -269,20 +270,21 @@ void Board_Remove(struct Board * p, const wchar_t * key)
         Node_RemoveAt(pParent, childIndex);
     }
 }
-
-static wchar_t * wstrndup(const wchar_t *s, size_t n)
+#ifdef _WIN32
+static char * strndup(const char *s, size_t n)
 {
     size_t len = n > 0 ? wcsnlen(s, n) : 0;
-    wchar_t *newt = (wchar_t *)malloc(sizeof(wchar_t) * len + 1);
+    char *newt = (char *)malloc(sizeof(char) * len + 1);
 
     if (newt == NULL)
         return NULL;
 
     newt[len] = '\0';
-    return (wchar_t *)memcpy(newt, s, sizeof(wchar_t) * len);
+    return (char *)memcpy(newt, s, sizeof(char) * len);
 }
+#endif
 
-void Board_Add(struct Board * p, const wchar_t * key)
+void Board_Add(struct Board * p, const char * key)
 {
     //  01234567
     //  AAAAAAAA/BBB/CCCC
@@ -294,18 +296,18 @@ void Board_Add(struct Board * p, const wchar_t * key)
     if (p->pRoot == NULL)
     {
         struct Node* pNew = Node_Create();
-        pNew->Key = _wcsdup(L"root");
+        pNew->Key = strdup("root");
         p->pRoot = pNew;
     }
 
     struct Node* pCurrent = p->pRoot;
-    const wchar_t *tail = key;
-    const wchar_t *front = key;
+    const char *tail = key;
+    const char *front = key;
     while (*tail)
     {
         if (*tail == '/' || *tail == ' ' || *(tail + 1) == 0)
         {
-            const wchar_t* key2 = front;
+            const char* key2 = front;
             int key2size;
             if (*(tail + 1) == 0)
             {
@@ -321,7 +323,7 @@ void Board_Add(struct Board * p, const wchar_t * key)
             {
                 //o que ele nao awchar_t vai criando..
                 struct Node* pNew = Node_Create();
-                pNew->Key = wstrndup(key2, (size_t)key2size);
+                pNew->Key = strndup(key2, (size_t)key2size);
 
                 Node_AddNode(pCurrent, pNew);
                 pCurrent = pNew;
@@ -336,7 +338,7 @@ void Board_Add(struct Board * p, const wchar_t * key)
             {
                 free((void*)pCurrent->Text);
 
-                pCurrent->Text = _wcsdup(tail + 1);
+                pCurrent->Text = strdup(tail + 1);
 
                 break;
             }
@@ -375,12 +377,12 @@ static void Node_PrintS(struct Node* p, int* y, int* n)
 
     if (p->Key)
     {
-        printf("%ls", (const wchar_t*)p->Key);
+        printf("%s", (const char*)p->Key);
     }
 
     if (p->Text)
     {
-        printf(" : %ls\n", p->Text);
+        printf(" : %s\n", p->Text);
     }
     
     printf("\n");

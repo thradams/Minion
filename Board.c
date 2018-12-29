@@ -19,7 +19,7 @@ struct Board Board = { 0 };
 
 static void GuiAddPost(enum TASK_ACTION action, void* p)
 {
-    wchar_t *psz = *((wchar_t **)p);
+    char *psz = *((char **)p);
     if (action == TASK_RUN)
     {
         Board_Add(&Board, psz);     
@@ -35,7 +35,7 @@ static void GuiAddPost(enum TASK_ACTION action, void* p)
 }
 
 #ifdef UIACTOR
-void AddPost(const wchar_t * fmt, ...)
+void AddPost(const char * fmt, ...)
 {
   
 
@@ -50,9 +50,10 @@ void AddPost(const wchar_t * fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    wchar_t *psz = (wchar_t *)malloc(sizeof(wchar_t) * 500);
-    //wchar_t buffer[500];
-    snprintf(psz, 500, fmt, args);
+    char *psz = (char *)malloc(sizeof(char) * 500);
+    psz[0] = 0;
+    //char buffer[500];
+    vsnprintf(psz, 500, fmt, args);
     va_end(args);
 
     UIActor_Post(GuiAddPost, &psz, sizeof(void*));
@@ -83,7 +84,7 @@ void Node_PrintS(struct Node* p, int* y, int* n)
     c_gotoxy(1 + *n * 1, *y);
 #endif
     //TextOut(hdc, 10 + *n * 20, *y, p->Key, wcslen(p->Key));
-    printf("%ls", (const wchar_t*)p->Key);
+    printf("%s", (const char*)p->Key);
   }
 
   if (p->Text)
@@ -94,7 +95,7 @@ void Node_PrintS(struct Node* p, int* y, int* n)
 #endif
     //TextOut(hdc, 200 + *n * 20, *y, p->Text, wcslen(p->Text));
     //TextOut(hdc, 10 + *n * 5, y, p->Key, 0);
-    printf(" : %ls", p->Text);
+    printf(" : %s", p->Text);
   }
   *y += 1;
   //printf("\n");
