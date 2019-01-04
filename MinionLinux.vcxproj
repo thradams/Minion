@@ -77,11 +77,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>/usr/include/</IncludePath>
     <LibraryPath>/usr/lib/x86_64-linux-gnu/</LibraryPath>
-    <AdditionalSourcesToCopyMapping>.\MyApp\html\index.html;.\MyApp\source\test.html;.\MyApp\source\Display.html;.\MyApp\source\Display.js;.\MyApp\source\global.css;.\MyApp\source\Home.html;.\MyApp\source\Home.js;.\MyApp\source\PageLink.css;.\MyApp\source\PageLink.html;.\MyApp\source\PageLink.js;.\MyApp\source\TopNavigation.css;.\MyApp\source\TopNavigation.html;.\MyApp\source\TopNavigation.js;.\MyApp\source\TopNavigationItem.html;.\MyApp\source\TopNavigationItem.js;.\html\core.js;.\html\runtime.js</AdditionalSourcesToCopyMapping>
+    <AdditionalSourcesToCopyMapping>.\MyApp\html\index.html;.\MyApp\source\test.html;.\MyApp\source\Display.html;.\MyApp\source\Display.js;.\MyApp\source\global.css;.\MyApp\source\Home.html;.\MyApp\source\Home.js;.\MyApp\source\PageLink.css;.\MyApp\source\PageLink.html;.\MyApp\source\PageLink.js;.\MyApp\source\TopNavigation.css;.\MyApp\source\TopNavigation.html;.\MyApp\source\TopNavigation.js;.\MyApp\source\TopNavigationItem.html;.\MyApp\source\TopNavigationItem.js;.\html\core.js;.\html\runtime.js;.\edit\core.js;.\edit\edit.js;.\edit\edit.html;.\edit\lib\codemirror.css;.\edit\lib\codemirror.js;.\edit\lib\codemirror.html;.\edit\mode\javascript\javascript.js;.\edit\mode\xml\xml.js</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>/usr/include/</IncludePath>
     <LibraryPath>/usr/lib/</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <AdditionalSourcesToCopyMapping>.\MyApp\html\index.html;.\MyApp\source\test.html;.\MyApp\source\Display.html;.\MyApp\source\Display.js;.\MyApp\source\global.css;.\MyApp\source\Home.html;.\MyApp\source\Home.js;.\MyApp\source\PageLink.css;.\MyApp\source\PageLink.html;.\MyApp\source\PageLink.js;.\MyApp\source\TopNavigation.css;.\MyApp\source\TopNavigation.html;.\MyApp\source\TopNavigation.js;.\MyApp\source\TopNavigationItem.html;.\MyApp\source\TopNavigationItem.js;.\html\core.js;.\html\runtime.js;.\edit\core.js;.\edit\edit.js;.\edit\edit.html;.\edit\lib\codemirror.css;.\edit\lib\codemirror.js;.\edit\lib\codemirror.html;.\edit\mode\javascript\javascript.js;.\edit\mode\xml\xml.js</AdditionalSourcesToCopyMapping>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <AdditionalSourcesToCopyMapping>.\MyApp\html\index.html;.\MyApp\source\test.html;.\MyApp\source\Display.html;.\MyApp\source\Display.js;.\MyApp\source\global.css;.\MyApp\source\Home.html;.\MyApp\source\Home.js;.\MyApp\source\PageLink.css;.\MyApp\source\PageLink.html;.\MyApp\source\PageLink.js;.\MyApp\source\TopNavigation.css;.\MyApp\source\TopNavigation.html;.\MyApp\source\TopNavigation.js;.\MyApp\source\TopNavigationItem.html;.\MyApp\source\TopNavigationItem.js;.\html\core.js;.\html\runtime.js;.\edit\core.js;.\edit\edit.js;.\edit\edit.html;.\edit\lib\codemirror.css;.\edit\lib\codemirror.js;.\edit\lib\codemirror.html;.\edit\mode\javascript\javascript.js;.\edit\mode\xml\xml.js</AdditionalSourcesToCopyMapping>
+    <IncludePath>/usr/include/</IncludePath>
+    <LibraryPath>/usr/lib/arm-linux-gnueabihf/</LibraryPath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="Actor.c" />
@@ -147,6 +155,15 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>pthread;ssl;crypto;%(Link.AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <PreprocessorDefinitions>CONSOLE_CONIO;UIACTOR;BOARD;</PreprocessorDefinitions>
+      <AdditionalOptions>-D_XOPEN_SOURCE=700 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <LibraryDependencies>pthread;crypto;ssl</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

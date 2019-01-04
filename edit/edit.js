@@ -149,7 +149,7 @@ var myCodeMirrorCSS;
 function SaveFiles()
 {
   var name = getQueryStringValue("name");
-  SendText(name + ".xml", myCodeMirrorXML.getValue(), function ()
+  SendText(name + ".html", myCodeMirrorXML.getValue(), function ()
   {
     SendText(name + ".js", myCodeMirrorJS.getValue(), function ()
     {
@@ -195,7 +195,7 @@ function OnPageLoad()
   var name = getQueryStringValue("name");
   
    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/source/" + name + '.xml', true);
+    xhr.open('GET', "/source/" + name + '.html', true);
     xhr.onload = function ()
     {
       if (xhr.readyState === xhr.DONE)

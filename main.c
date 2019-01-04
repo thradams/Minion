@@ -146,22 +146,40 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
     return Error_IsEmpty(error);
 }
 
-
+void PrintHelp()
+{
+    printf("usage:\n"
+        " create TemplateName App_Path\n"
+        " build App_Path\n"
+        " run App_Path\n"
+    );
+}
 int main(int argc, char *argv[])
 {
+    char Drive[256];
+    char Directory[256];
+    char Filename[256];
+    char Extension[256];
 
-    printf("Minions Castle\n");
+    fs_path_split(argv[0],
+        Drive,
+        Directory,
+        Filename,
+        Extension);
+
+    printf("Minions Castle running at %s\n", Directory);
 
     if (argc < 2)
     {
-        printf("please inform the name of the working folder");
+        PrintHelp();
         return 1;
     }
 
     if (argc == 4 && (strcmp(argv[1], "create") == 0))
     {
         const char* templateName = argv[2];
-        const char* appName = argv[3];
+        const char* appPath = argv[3];
+        CreateApp(Directory, appPath);
     }
     else if (argc == 3 && (strcmp(argv[1], "build") == 0))
     {
@@ -171,16 +189,7 @@ int main(int argc, char *argv[])
     else if (argc == 3 && (strcmp(argv[1], "run") == 0))
     {
         struct Error error = ERROR_INIT;
-        char Drive[256];
-        char Directory[256];
-        char Filename[256];
-        char Extension[256];
 
-        fs_path_split(argv[0],
-            Drive,
-            Directory,
-            Filename,
-            Extension);
 
         char currentPath[256] = { 0 };
         fs_current_path(currentPath);
@@ -207,11 +216,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        printf("usage:\n"
-            " create TemplateName AppName\n"
-            " build AppName\n"
-            " run AppName\n"
-        );
+        PrintHelp();
     }
 
 

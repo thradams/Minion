@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 
 #ifdef _WIN32
 #else
@@ -478,9 +479,10 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
 
     time_t curtime = time(NULL);
     char currentTimeUTC[200];
-    struct tm s1;
+    struct tm s1 = {0};
     //gmtime_s(&s1, &curtime);
-    gmtime_r(&s1, &curtime);
+    //gmtime_r(&s1, &curtime);
+    gmtime_r(&curtime, &s1);
 
     strftime(currentTimeUTC, 200, "%a, %d %b %Y %H:%M:%S GMT", &s1);
     bool bStat = false;
@@ -493,6 +495,12 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
     if (stat(fileName, &info) == 0)
     {
         bStat = true;
+    }
+    else
+    {
+
+        Error_Set(error, "stat error = %d, %s", errno, fileName);
+        
     }
 #endif
 
