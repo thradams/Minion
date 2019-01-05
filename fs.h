@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#define FS_MAX_PATH 256
+
 struct error_code
 {
     unsigned int code;
@@ -29,6 +31,8 @@ struct directory_iterator
     bool bIsDir;
 };
 
-bool directory_iterator_init(struct directory_iterator* di, const char* path);
+bool directory_iterator_init(struct directory_iterator* di, const char* path, struct error_code* ec);
 bool directory_iterator_next(struct directory_iterator* di);
 void directory_iterator_destroy(struct directory_iterator* di);
+
+bool  fs_copy(const char* source, const char* dest, struct error_code* ec);

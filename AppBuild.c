@@ -71,7 +71,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
         strcat(buffer, "/source");
 
         struct directory_iterator di = { 0 };
-        if (directory_iterator_init(&di, buffer))
+        if (directory_iterator_init(&di, buffer, &ec))
         {
             do
             {
