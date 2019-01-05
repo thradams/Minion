@@ -17,7 +17,20 @@
 #endif
 
 #ifdef _WIN32
-#define gmtime_r gmtime_s
+
+struct tm *gmtime_r(const time_t * sourceTime,
+    struct tm* tmDest)
+{
+
+    errno_t e = gmtime_s(
+        tmDest,
+        sourceTime
+    );
+
+    return e == 0 ? tmDest : 0;
+}
+
+
 #else
 #define MAX_PATH 256
 #endif
@@ -508,7 +521,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
     if (bStat)
     {
       struct tm s;
-      gmtime_r(&s, &info.st_mtime);
+      gmtime_r(&info.st_mtime, &s);
       strftime(lastModified, 200, "%a, %d %b %Y %H:%M:%S GMT", &s);
 
       if (fileName[0] == '/')

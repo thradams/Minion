@@ -1,10 +1,10 @@
 #include "fs.h"
+#include <string.h>
+#include <assert.h>
 
 #ifdef _WIN32
 #include <windows.h>
 #include "Shlwapi.h"
-#include <string.h>
-#include <assert.h>
 
 #pragma comment(lib, "Shlwapi.lib")
 
