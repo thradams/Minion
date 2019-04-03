@@ -1,6 +1,3 @@
-Design.TopNavigation = `<TopNavigation className="topnav"/>
-`;
-
 
 class TopNavigation {
 
@@ -29,3 +26,7 @@ class TopNavigation {
         }
     }
 }
+
+TopNavigation.Template=`<TopNavigation className="topnav"/>
+`;
+

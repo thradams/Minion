@@ -125,6 +125,7 @@ bool RunApp(const char* rootPath, const char* appName, struct Error* error)
                     break;
 
             }
+            Sleep(30);
         }
 
     }

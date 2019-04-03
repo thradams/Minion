@@ -382,7 +382,7 @@ bool MinionServer_Init(struct MinionServer* server,
 
 
     if (HttpServer_Init(&server->HttpServer,
-        SECURITY_VERSION_NONE,
+                        SECURITY_VERSION_TLS11,
         MinionServerConnectionHandler,
         "8080",
         "my_test_cert.crt",

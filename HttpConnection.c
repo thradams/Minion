@@ -300,7 +300,7 @@ bool HttpConnection_GetChar(struct HttpConnection* connection, char *ch, struct 
     if (result == SOCKET_ERROR)
     {
       //int socketError = WSAGetLastError();
-        Error_Set(error, "error");// , GetSocketErrorA(socketError));
+        Error_Set(error, "%s", GetSocketErrorA(result));// , GetSocketErrorA(socketError));
       //if (socketError == 0)
       //{
         //ASSERT(false);

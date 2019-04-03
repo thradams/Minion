@@ -1,5 +1,3 @@
-Design.TopNavigationItem = `<TopNavigationItem Class='a'/>`;
-
 
 class TopNavigationItem {
 
@@ -16,3 +14,6 @@ class TopNavigationItem {
         }
     }
 }
+
+TopNavigationItem.Template=`<TopNavigationItem Class='a'/>`;
+

@@ -1,12 +1,8 @@
-var Design = {};
-
 
 function CreateWebElement(node, screenObject, parentObject, parentHtmlElement)
 {
-  
-
   var htmlElement = document.createElement(node.nodeName);
-  
+
   for (var j = 0; j < node.attributes.length; j++)
   {
     htmlElement.setAttribute(node.attributes[j].name, node.attributes[j].value);
@@ -39,13 +35,16 @@ function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement,
       }
     } else
     {
-      var classNameChild = child_n.nodeName;
-      if (Design[classNameChild])
-      {
-        var childObject = eval("new " + classNameChild + "();");
+      var classNameChild = child_n.nodeName;        
+      var ObjectClass = eval("typeof " + classNameChild + " === 'function' ? " + classNameChild + ": null");
 
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(Design[classNameChild], "application/xml");
+      if (ObjectClass)
+      {
+         var childObject = new ObjectClass(); 
+         var templateOfClass = ObjectClass.Template;
+
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(templateOfClass, "application/xml");
         var templateNode = doc.firstChild;
 
         var elemType = 'div';
@@ -53,7 +52,7 @@ function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement,
         {
           elemType = templateNode.attributes["Class"].nodeValue;
         }
-        
+
         if (child_n.attributes["Name"])
         {
           var childName = child_n.attributes["Name"].nodeValue;
@@ -71,7 +70,7 @@ function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement,
         {
           childObject.Screen = screenObject;
         }
-        
+
         CreateCustom(templateNode /*node*/,
           screenObject,
           childObject /*thisObject*/,
@@ -84,10 +83,10 @@ function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement,
           childObject.htmlElement /*parentHtmlElement*/,
           true);
 
-          if ("OnCreated" in childObject)
-          {
-            childObject.OnCreated();
-          }
+        if ("OnCreated" in childObject)
+        {
+          childObject.OnCreated();
+        }
       }
       else
       {
@@ -119,10 +118,16 @@ function CreateCustom(instanceNode, screenObject, thisObject, parentHtmlElement,
 
 function InstanciateComponent(className)
 {
-  var childObject = eval("new " + className + "();");
+    var ObjectClass = eval("typeof " + className + " === 'function' ? " + className + ": null" );
 
+    
+    var childObject = new ObjectClass();
+    var templateOfClass = ObjectClass.Template;
+
+
+  
   var parser = new DOMParser();
-  var doc = parser.parseFromString(Design[className], "application/xml");
+    var doc = parser.parseFromString(templateOfClass, "application/xml");
   var templateXML = doc.firstChild;
 
   var elemType = 'div';
@@ -148,9 +153,8 @@ function ShowScreen(className)
   document.body.innerText = "";
   document.body.appendChild(childObject.htmlElement);
 
-  console.log(JSON.stringify(childObject));
   if ("OnShow" in childObject)
-  {    
+  {
     childObject.OnShow();
   }
 }

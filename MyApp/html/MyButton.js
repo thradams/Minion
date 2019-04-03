@@ -1,5 +1,3 @@
-Design.MyButton = `<MyButton Class = "button" className="MyButton" Text="Button"></MyButton>`;
-
 class MyButton {
 
     set Text(s) {
@@ -20,3 +18,6 @@ class MyButton {
         };
     }
 }
+
+MyButton.Template=`<MyButton Class = "button" className="MyButton" Text="Button"></MyButton>`;
+

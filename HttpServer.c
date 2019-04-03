@@ -148,8 +148,8 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
         struct Error error = ERROR_INIT;
 
         //https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-        char bufferLeft[200];
-        char bufferRight[200];
+        char bufferLeft[1000];
+        char bufferRight[1000];
         //Method SP
         ReadUntil(pCon, ' ', bufferLeft, sizeof(bufferLeft), &error);
         if (CaseInsensitiveCompare(bufferLeft, "get") == 0)
@@ -174,7 +174,7 @@ static void HandleConnection(enum TASK_ACTION action, void* pData)
         //Le os headers
         while (Error_IsEmpty(&error))
         {
-            if (!ReadLine(pCon, bufferLeft, bufferRight, 1000, &error))
+            if (!ReadLine(pCon, bufferLeft, bufferRight, sizeof(bufferRight), &error))
             {
                 break;
             }

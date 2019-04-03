@@ -107,22 +107,7 @@ void BuildApp(const char* folderName, const char* rootFolder)
                     FILE * inputJS = fopen(inputJSName, "r");
                     FILE * inputXML = fopen(inputXMLName, "r");
 
-                    if (inputXML)
-                    {
-                        char justName[FS_MAX_PATH] = { 0 };
-                        strncat(justName, di.fileName, l - 3);
-
-
-                        fprintf(outputJS, "Design.%s = `", justName);
-                        while (!feof(inputXML))
-                        {
-                            int c = fgetc(inputXML);
-                            if (c != EOF)
-                                putc(c, outputJS);
-                        }
-                        fprintf(outputJS, "`;\n\n");
-                        fclose(inputXML);
-                    }
+                    
 
                     if (inputJS)
                     {
@@ -133,6 +118,25 @@ void BuildApp(const char* folderName, const char* rootFolder)
                                 putc(c, outputJS);
                         }
                     }
+
+					if (inputXML)
+					{
+						char justName[FS_MAX_PATH] = { 0 };
+						strncat(justName, di.fileName, l - 3);
+
+						fprintf(outputJS, "\n%s.Template=`", justName);// subtract(a, b) { return a - b }
+					
+													
+						while (!feof(inputXML))
+						{
+							int c = fgetc(inputXML);
+							if (c != EOF)
+								putc(c, outputJS);
+						}
+						fprintf(outputJS, "`;\n\n");
+						fclose(inputXML);
+					}
+
                     fclose(inputJS);
                     fclose(outputJS);
                 }
