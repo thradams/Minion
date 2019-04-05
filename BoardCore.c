@@ -189,7 +189,7 @@ void Node_RemoveKey(struct Node* p, const char* key)
 {
     if (key != NULL)
     {
-        int idx = Node_Find(p, key, (int)wcslen(key));
+        int idx = Node_Find(p, key, (int)strlen(key));
         if (idx != -1)
         {
             Node_RemoveAt(p, idx);
@@ -273,7 +273,7 @@ void Board_Remove(struct Board * p, const char * key)
 #ifdef _WIN32
 static char * strndup(const char *s, size_t n)
 {
-    size_t len = n > 0 ? wcsnlen(s, n) : 0;
+    size_t len = n > 0 ? strnlen(s, n) : 0;
     char *newt = (char *)malloc(sizeof(char) * len + 1);
 
     if (newt == NULL)

@@ -23,32 +23,32 @@
     <ProjectGuid>{F0E2E0F1-951A-44FC-AE82-5273ABF8A96D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TestBoard</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -153,15 +153,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Actor.c" />
     <ClCompile Include="..\Board.c" />
     <ClCompile Include="..\BoardCore.c" />
     <ClCompile Include="..\conio.c" />
+    <ClCompile Include="..\TaskQueue.c" />
+    <ClCompile Include="..\ThreadPool.c" />
+    <ClCompile Include="..\tinycthread.c" />
+    <ClCompile Include="..\UITask.c" />
     <ClCompile Include="Test_Board.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Actor.h" />
     <ClInclude Include="..\Board.h" />
     <ClInclude Include="..\BoardCore.h" />
     <ClInclude Include="..\conio.h" />
+    <ClInclude Include="..\TaskQueue.h" />
+    <ClInclude Include="..\ThreadPool.h" />
+    <ClInclude Include="..\tinycthread.h" />
+    <ClInclude Include="..\UITask.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

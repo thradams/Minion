@@ -546,7 +546,7 @@ bool HttpConnection_SendFile(struct HttpConnection* connection,
             int number_characters_written = 0;
 
 
-            if (lastModified[0] = 0)
+            if (lastModified[0] == 0)
             {
               number_characters_written = snprintf(sendbuf,
                 bufferSize,

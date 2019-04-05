@@ -19,6 +19,21 @@
     <ClCompile Include="..\BoardCore.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Actor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TaskQueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThreadPool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinycthread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UITask.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Board.h">
@@ -30,5 +45,16 @@
     <ClInclude Include="..\BoardCore.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Actor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TaskQueue.h" />
+    <ClInclude Include="..\ThreadPool.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tinycthread.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UITask.h" />
   </ItemGroup>
 </Project>
